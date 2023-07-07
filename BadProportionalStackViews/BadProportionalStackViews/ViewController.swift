@@ -25,14 +25,14 @@ class ViewController: UIViewController {
 		v.myIntrinsicSize = .init(width: 240.0, height: 0.0)
 		
 		let mv = MeasureView()
-		mv.axis = .horizontal
+		mv.axis = .vertical
 		mv.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(mv)
 		NSLayoutConstraint.activate([
 			mv.topAnchor.constraint(equalTo: v.bottomAnchor, constant: 4.0),
 			mv.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
 			mv.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
-			//mv.heightAnchor.constraint(equalToConstant: 80.0),
+			mv.heightAnchor.constraint(equalToConstant: 180.0),
 		])
 		
 		v.backgroundColor = .blue

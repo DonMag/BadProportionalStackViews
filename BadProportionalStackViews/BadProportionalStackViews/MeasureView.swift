@@ -57,8 +57,6 @@ class MeasureView: UIView {
 		super.layoutSubviews()
 
 		var pt1: CGPoint!
-		var pt2: CGPoint!
-
 		let pth = CGMutablePath()
 
 		var dRect = bounds
@@ -69,69 +67,37 @@ class MeasureView: UIView {
 			
 			dRect = bounds.insetBy(dx: 0.0, dy: 2.0)
 			
-			// start at top center
+			// top arrow-head
+			pt1 = .init(x: dRect.midX - arrowHeadWidth * 0.5, y: dRect.minY + arrowHeadHeight)
+			pth.move(to: pt1)
+
 			pt1 = .init(x: dRect.midX, y: dRect.minY)
+			pth.addLine(to: pt1)
+			pt1 = .init(x: dRect.midX + arrowHeadWidth * 0.5, y: dRect.minY + arrowHeadHeight)
+			pth.addLine(to: pt1)
+
+			// bottom arrow-head
+			pt1 = .init(x: dRect.midX - arrowHeadWidth * 0.5, y: dRect.maxY - arrowHeadHeight)
 			pth.move(to: pt1)
 			
-			pt2 = pt1
-			pt2.x -= arrowHeadWidth * 0.5
-			pt2.y += arrowHeadHeight
-			
-			// top arrow-head left arm
-			pth.addLine(to: pt2)
-			
-			// back to top center
-			pth.move(to: pt1)
-			
-			pt2 = pt1
-			pt2.x += arrowHeadWidth * 0.5
-			pt2.y += arrowHeadHeight
-			
-			// top arrow-head right arm
-			pth.addLine(to: pt2)
-			
-			// start at bottom center
 			pt1 = .init(x: dRect.midX, y: dRect.maxY)
-			pth.move(to: pt1)
-			
-			pt2 = pt1
-			pt2.x -= arrowHeadWidth * 0.5
-			pt2.y -= arrowHeadHeight
-			
-			// bottom arrow-head left arm
-			pth.addLine(to: pt2)
-			
-			// back to bottom center
-			pth.move(to: pt1)
-			
-			pt2 = pt1
-			pt2.x += arrowHeadWidth * 0.5
-			pt2.y -= arrowHeadHeight
-			
-			// bottom arrow-head right arm
-			pth.addLine(to: pt2)
+			pth.addLine(to: pt1)
+			pt1 = .init(x: dRect.midX + arrowHeadWidth * 0.5, y: dRect.maxY - arrowHeadHeight)
+			pth.addLine(to: pt1)
 			
 			if mLabel.frame.height + 8.0 < dRect.height {
 				
-				// back to top center
+				// top center
 				pt1 = .init(x: dRect.midX, y: dRect.minY)
 				pth.move(to: pt1)
+				pt1.y = mLabel.frame.minY - 4.0
+				pth.addLine(to: pt1)
 				
-				pt2 = pt1
-				pt2.y = mLabel.frame.minY - 4.0
-				
-				// top arrow-head vertical body
-				pth.addLine(to: pt2)
-				
-				// back to bottom center
+				// bottom center
 				pt1 = .init(x: dRect.midX, y: dRect.maxY)
 				pth.move(to: pt1)
-				
-				pt2 = pt1
-				pt2.y = mLabel.frame.maxY + 4.0
-				
-				// bottom arrow-head vertical body
-				pth.addLine(to: pt2)
+				pt1.y = mLabel.frame.maxY + 4.0
+				pth.addLine(to: pt1)
 				
 			}
 
@@ -139,15 +105,15 @@ class MeasureView: UIView {
 			
 			// top and bottom edge lines
 			pt1 = .init(x: dRect.minX, y: dRect.minY)
-			pt2 = .init(x: dRect.maxX, y: dRect.minY)
 			pth.move(to: pt1)
-			pth.addLine(to: pt2)
+			pt1.x = dRect.maxX
+			pth.addLine(to: pt1)
 			
 			pt1 = .init(x: dRect.minX, y: dRect.maxY)
-			pt2 = .init(x: dRect.maxX, y: dRect.maxY)
 			pth.move(to: pt1)
-			pth.addLine(to: pt2)
-			
+			pt1.x = dRect.maxX
+			pth.addLine(to: pt1)
+
 		} else {
 			
 			mLabel.text = String(format: "%0.2f", bounds.width)
@@ -158,53 +124,33 @@ class MeasureView: UIView {
 			pt1 = .init(x: dRect.minX + arrowHeadWidth, y: dRect.midY - arrowHeadHeight * 0.5)
 			pth.move(to: pt1)
 			
-			pt2 = .init(x: dRect.minX, y: dRect.midY)
-			pth.addLine(to: pt2)
-			pt2 = .init(x: dRect.minX + arrowHeadWidth, y: dRect.midY + arrowHeadHeight * 0.5)
-			pth.addLine(to: pt2)
+			pt1 = .init(x: dRect.minX, y: dRect.midY)
+			pth.addLine(to: pt1)
+			pt1 = .init(x: dRect.minX + arrowHeadWidth, y: dRect.midY + arrowHeadHeight * 0.5)
+			pth.addLine(to: pt1)
+
+			// right arrow-head
+			pt1 = .init(x: dRect.maxX - arrowHeadWidth, y: dRect.midY - arrowHeadHeight * 0.5)
+			pth.move(to: pt1)
 			
-			// start at right middle
 			pt1 = .init(x: dRect.maxX, y: dRect.midY)
-			pth.move(to: pt1)
-			
-			pt2 = pt1
-			pt2.x -= arrowHeadWidth
-			pt2.y -= arrowHeadHeight * 0.5
-			
-			// bottom arrow-head left arm
-			pth.addLine(to: pt2)
-			
-			// back to bottom center
-			pth.move(to: pt1)
-			
-			pt2 = pt1
-			pt2.x -= arrowHeadWidth
-			pt2.y += arrowHeadHeight * 0.5
-			
-			// bottom arrow-head right arm
-			pth.addLine(to: pt2)
+			pth.addLine(to: pt1)
+			pt1 = .init(x: dRect.maxX - arrowHeadWidth, y: dRect.midY + arrowHeadHeight * 0.5)
+			pth.addLine(to: pt1)
 			
 			if mLabel.frame.width + 8.0 < dRect.width {
 				
-				// back to top center
+				// left middle
 				pt1 = .init(x: dRect.minX, y: dRect.midY)
 				pth.move(to: pt1)
+				pt1.x = mLabel.frame.minX - 4.0
+				pth.addLine(to: pt1)
 				
-				pt2 = pt1
-				pt2.x = mLabel.frame.minX - 4.0
-				
-				// top arrow-head vertical body
-				pth.addLine(to: pt2)
-				
-				// back to bottom center
+				// right middle
 				pt1 = .init(x: dRect.maxX, y: dRect.midY)
 				pth.move(to: pt1)
-				
-				pt2 = pt1
-				pt2.x = mLabel.frame.maxX + 4.0
-				
-				// bottom arrow-head vertical body
-				pth.addLine(to: pt2)
+				pt1.x = mLabel.frame.maxX + 4.0
+				pth.addLine(to: pt1)
 				
 			}
 			
@@ -212,14 +158,14 @@ class MeasureView: UIView {
 			
 			// left and right edge lines
 			pt1 = .init(x: dRect.minX, y: dRect.minY)
-			pt2 = .init(x: dRect.minX, y: dRect.maxY)
 			pth.move(to: pt1)
-			pth.addLine(to: pt2)
+			pt1.y = dRect.maxY
+			pth.addLine(to: pt1)
 			
 			pt1 = .init(x: dRect.maxX, y: dRect.minY)
-			pt2 = .init(x: dRect.maxX, y: dRect.maxY)
 			pth.move(to: pt1)
-			pth.addLine(to: pt2)
+			pt1.y = dRect.maxY
+			pth.addLine(to: pt1)
 			
 		}
 		
