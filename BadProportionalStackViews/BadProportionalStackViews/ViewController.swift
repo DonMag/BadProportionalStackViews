@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class tViewController: UIViewController {
 	let v = IntrinsicView()
 	
 	override func viewDidLoad() {
@@ -97,9 +97,8 @@ class szViewController: UIViewController {
 
 }
 
-class vstViewController: UIViewController {
+class ViewController: UIViewController {
 	
-	var labels: [UILabel] = []
 	var leftLabels: [UILabel] = []
 	var rightLabels: [UILabel] = []
 	var mViews: [MeasureView] = []
@@ -128,13 +127,12 @@ class vstViewController: UIViewController {
 			view.addSubview(sv)
 			for (s, c) in zip(strs, colors) {
 				let l = UILabel()
-				l.font = .systemFont(ofSize: fSize, weight: .regular)
+				l.font = .monospacedSystemFont(ofSize: fSize, weight: .regular)
 				l.numberOfLines = 0
 				l.textAlignment = .center
 				l.text = s
 				l.backgroundColor = c
 				l.textColor = .white
-				labels.append(l)
 				if sv == leftStack {
 					leftLabels.append(l)
 				} else {
@@ -156,9 +154,9 @@ class vstViewController: UIViewController {
 		}
 		for i in 0..<3 {
 			mViews[i].leadingAnchor.constraint(equalTo: leftStack.trailingAnchor, constant: 8.0).isActive = true
-			mViews[i+3].leadingAnchor.constraint(equalTo: mViews[i].trailingAnchor, constant: 8.0).isActive = true
+			mViews[i+3].leadingAnchor.constraint(equalTo: mViews[i].trailingAnchor, constant: 24.0).isActive = true
 			mViews[i+3].trailingAnchor.constraint(equalTo: rightStack.leadingAnchor, constant: -8.0).isActive = true
-			let c = labels[i].heightAnchor.constraint(equalToConstant: 100.0)
+			let c = leftLabels[i].heightAnchor.constraint(equalToConstant: 100.0)
 			c.priority = .required - 1
 			c.isActive = i < 2
 			calcHeightConstraints.append(c)
@@ -208,4 +206,5 @@ class vstViewController: UIViewController {
 	}
 	
 }
+
 
