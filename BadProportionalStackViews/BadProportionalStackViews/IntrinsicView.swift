@@ -17,13 +17,6 @@ class IntrinsicView: UIView {
 		return v
 	}()
 
-//	public var w: CGFloat = 0 { didSet { invalidateIntrinsicContentSize() } }
-//	public var h: CGFloat = 0 { didSet { invalidateIntrinsicContentSize() } }
-//
-//	override var intrinsicContentSize: CGSize {
-//		return .init(width: w, height: h)
-//	}
-
 	public var myIntrinsicSize: CGSize = .zero
 	override var intrinsicContentSize: CGSize {
 		return myIntrinsicSize

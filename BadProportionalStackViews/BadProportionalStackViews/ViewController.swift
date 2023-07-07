@@ -104,8 +104,8 @@ class vViewController: UIViewController {
 
 	var stSpacing: CGFloat = 0.0
 	
-	var aLabels: [UILabel] = []
-	var bLabels: [UILabel] = []
+	var aViewss: [UIView] = []
+	var bViewss: [UIView] = []
 	var measureViews: [MeasureView] = []
 	var calcConstraints: [NSLayoutConstraint] = []
 	
@@ -134,9 +134,9 @@ class vViewController: UIViewController {
 				l.backgroundColor = c
 				l.textColor = .white
 				if sv == aStack {
-					aLabels.append(l)
+					aViewss.append(l)
 				} else {
-					bLabels.append(l)
+					bViewss.append(l)
 				}
 				sv.addArrangedSubview(l)
 				let mv = MeasureView()
@@ -156,7 +156,7 @@ class vViewController: UIViewController {
 			measureViews[i+3].trailingAnchor.constraint(equalTo: bStack.leadingAnchor, constant: -8.0).isActive = true
 		}
 		for i in 0..<2 {
-			let c = aLabels[i].heightAnchor.constraint(equalToConstant: 100.0)
+			let c = aViewss[i].heightAnchor.constraint(equalToConstant: 100.0)
 			c.priority = .required - 1
 			c.isActive = true
 			calcConstraints.append(c)
@@ -188,12 +188,12 @@ class vViewController: UIViewController {
 	}
 	func updateLeft() {
 		
-		let sumOfHeights = aLabels.reduce(0) { $0 + $1.intrinsicContentSize.height }
+		let sumOfHeights = aViewss.reduce(0) { $0 + $1.intrinsicContentSize.height }
 		
 		let svHeight: CGFloat = aStack.frame.height - (aStack.spacing * 2.0)
 
 		for i in 0..<2 {
-			calcConstraints[i].constant = aLabels[i].intrinsicContentSize.height / sumOfHeights * svHeight
+			calcConstraints[i].constant = aViewss[i].intrinsicContentSize.height / sumOfHeights * svHeight
 		}
 		
 	}
@@ -217,8 +217,8 @@ class ViewController: UIViewController {
 	
 	var stSpacing: CGFloat = 0.0
 	
-	var aLabels: [UILabel] = []
-	var bLabels: [UILabel] = []
+	var aViews: [UIView] = []
+	var bViewss: [UIView] = []
 	var measureViews: [MeasureView] = []
 	var calcConstraints: [NSLayoutConstraint] = []
 	
@@ -246,9 +246,9 @@ class ViewController: UIViewController {
 				l.backgroundColor = c
 				l.textColor = .white
 				if sv == aStack {
-					aLabels.append(l)
+					aViews.append(l)
 				} else {
-					bLabels.append(l)
+					bViewss.append(l)
 				}
 				sv.addArrangedSubview(l)
 				let mv = MeasureView()
@@ -268,7 +268,7 @@ class ViewController: UIViewController {
 			measureViews[i+3].bottomAnchor.constraint(equalTo: bStack.topAnchor, constant: -8.0).isActive = true
 		}
 		for i in 0..<2 {
-			let c = aLabels[i].widthAnchor.constraint(equalToConstant: 100.0)
+			let c = aViews[i].widthAnchor.constraint(equalToConstant: 100.0)
 			c.priority = .required - 1
 			c.isActive = true
 			calcConstraints.append(c)
@@ -300,12 +300,12 @@ class ViewController: UIViewController {
 	}
 	func updateLeft() {
 		
-		let sumOfWidths = aLabels.reduce(0) { $0 + $1.intrinsicContentSize.width }
+		let sumOfWidths = aViews.reduce(0) { $0 + $1.intrinsicContentSize.width }
 		
 		let svWidth: CGFloat = aStack.frame.width - (aStack.spacing * 2.0)
 		
 		for i in 0..<2 {
-			calcConstraints[i].constant = aLabels[i].intrinsicContentSize.width / sumOfWidths * svWidth
+			calcConstraints[i].constant = aViews[i].intrinsicContentSize.width / sumOfWidths * svWidth
 		}
 		
 	}
@@ -321,5 +321,7 @@ class ViewController: UIViewController {
 	}
 	
 }
+
+
 
 
