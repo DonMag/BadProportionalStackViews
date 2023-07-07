@@ -99,16 +99,16 @@ class szViewController: UIViewController {
 
 class ViewController: UIViewController {
 	
-	var leftLabels: [UILabel] = []
-	var rightLabels: [UILabel] = []
-	var mViews: [MeasureView] = []
+	let aStack = UIStackView()
+	let bStack = UIStackView()
+
+	var stSpacing: CGFloat = 0.0
+	
+	var aLabels: [UILabel] = []
+	var bLabels: [UILabel] = []
+	var measureViews: [MeasureView] = []
 	var calcHeightConstraints: [NSLayoutConstraint] = []
 	
-	var fSize: CGFloat = 15.0
-	
-	let leftStack = UIStackView()
-	let rightStack = UIStackView()
-
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
@@ -121,26 +121,26 @@ class ViewController: UIViewController {
 			.systemRed, .systemGreen, .systemBlue,
 		]
 
-		[leftStack, rightStack].forEach { sv in
+		[aStack, bStack].forEach { sv in
 			sv.axis = .vertical
 			sv.translatesAutoresizingMaskIntoConstraints = false
 			view.addSubview(sv)
 			for (s, c) in zip(strs, colors) {
 				let l = UILabel()
-				l.font = .monospacedSystemFont(ofSize: fSize, weight: .regular)
+				l.font = .monospacedSystemFont(ofSize: 15, weight: .regular)
 				l.numberOfLines = 0
 				l.textAlignment = .center
 				l.text = s
 				l.backgroundColor = c
 				l.textColor = .white
-				if sv == leftStack {
-					leftLabels.append(l)
+				if sv == aStack {
+					aLabels.append(l)
 				} else {
-					rightLabels.append(l)
+					bLabels.append(l)
 				}
 				sv.addArrangedSubview(l)
 				let mv = MeasureView()
-				mViews.append(mv)
+				measureViews.append(mv)
 				mv.translatesAutoresizingMaskIntoConstraints = false
 				view.addSubview(mv)
 				let c1 = mv.topAnchor.constraint(equalTo: l.topAnchor)
@@ -153,32 +153,32 @@ class ViewController: UIViewController {
 			}
 		}
 		for i in 0..<3 {
-			mViews[i].leadingAnchor.constraint(equalTo: leftStack.trailingAnchor, constant: 8.0).isActive = true
-			mViews[i+3].leadingAnchor.constraint(equalTo: mViews[i].trailingAnchor, constant: 24.0).isActive = true
-			mViews[i+3].trailingAnchor.constraint(equalTo: rightStack.leadingAnchor, constant: -8.0).isActive = true
-			let c = leftLabels[i].heightAnchor.constraint(equalToConstant: 100.0)
+			measureViews[i].leadingAnchor.constraint(equalTo: aStack.trailingAnchor, constant: 8.0).isActive = true
+			measureViews[i+3].leadingAnchor.constraint(equalTo: measureViews[i].trailingAnchor, constant: 24.0).isActive = true
+			measureViews[i+3].trailingAnchor.constraint(equalTo: bStack.leadingAnchor, constant: -8.0).isActive = true
+			let c = aLabels[i].heightAnchor.constraint(equalToConstant: 100.0)
 			c.priority = .required - 1
 			c.isActive = i < 2
 			calcHeightConstraints.append(c)
 		}
 		for i in 1..<6 {
-			mViews[i].widthAnchor.constraint(equalTo: mViews[0].widthAnchor).isActive = true
+			measureViews[i].widthAnchor.constraint(equalTo: measureViews[0].widthAnchor).isActive = true
 		}
 		
 		NSLayoutConstraint.activate([
-			leftStack.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
-			leftStack.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
-			leftStack.heightAnchor.constraint(equalToConstant: 600.0),
-			leftStack.widthAnchor.constraint(equalToConstant: 80.0),
+			aStack.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
+			aStack.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			aStack.heightAnchor.constraint(equalToConstant: 600.0),
+			aStack.widthAnchor.constraint(equalToConstant: 80.0),
 
-			rightStack.topAnchor.constraint(equalTo: leftStack.topAnchor),
-			rightStack.heightAnchor.constraint(equalTo: leftStack.heightAnchor),
-			rightStack.widthAnchor.constraint(equalTo: leftStack.widthAnchor),
+			bStack.topAnchor.constraint(equalTo: aStack.topAnchor),
+			bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
+			bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
 		])
 	
-		rightStack.distribution = .fillProportionally
+		bStack.distribution = .fillProportionally
 	
-		leftStack.distribution = .fill
+		aStack.distribution = .fill
 		
 	}
 	
@@ -188,20 +188,23 @@ class ViewController: UIViewController {
 	}
 	func updateLeft() {
 		
-		let sumOfHeights = leftLabels.reduce(0) { $0 + $1.intrinsicContentSize.height }
+		let sumOfHeights = aLabels.reduce(0) { $0 + $1.intrinsicContentSize.height }
 		
-		let svHeight: CGFloat = leftStack.frame.height - (leftStack.spacing * 2.0)
+		let svHeight: CGFloat = aStack.frame.height - (aStack.spacing * 2.0)
 
 		for i in 0..<2 {
-			calcHeightConstraints[i].constant = leftLabels[i].intrinsicContentSize.height / sumOfHeights * svHeight
+			calcHeightConstraints[i].constant = aLabels[i].intrinsicContentSize.height / sumOfHeights * svHeight
 		}
 		
 	}
 	
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		let sp: CGFloat = 75.0
-		leftStack.spacing = leftStack.spacing == sp ? 0.0 : sp
-		rightStack.spacing = leftStack.spacing
+		stSpacing += 15.0
+		if stSpacing > 120.0 {
+			stSpacing = 0.0
+		}
+		aStack.spacing = stSpacing
+		bStack.spacing = stSpacing
 		updateLeft()
 	}
 	
