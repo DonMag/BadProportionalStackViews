@@ -11,7 +11,7 @@ class IntrinsicView: UIView {
 
 	let mLabel: UILabel = {
 		let v = UILabel()
-		v.font = .monospacedDigitSystemFont(ofSize: 12.0, weight: .light)
+		v.font = .monospacedDigitSystemFont(ofSize: 12.0, weight: .bold)
 		v.textAlignment = .center
 		v.textColor = .white
 		return v
@@ -39,7 +39,15 @@ class IntrinsicView: UIView {
 		])
 	}
 	override func layoutSubviews() {
-		mLabel.text = "\(self.intrinsicContentSize)"
+		if self.intrinsicContentSize.width != 0.0 && self.intrinsicContentSize.height != 0.0 {
+			mLabel.text = "w: \(self.intrinsicContentSize)"
+		} else {
+			if self.intrinsicContentSize.width > 0.0 {
+				mLabel.text = "w: \(self.intrinsicContentSize.width)"
+			} else {
+				mLabel.text = "h: \(self.intrinsicContentSize.height)"
+			}
+		}
 	}
 	
 }
