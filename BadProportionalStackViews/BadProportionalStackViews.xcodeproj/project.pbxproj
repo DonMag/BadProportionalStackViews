@@ -13,6 +13,8 @@
 		FC436D2B2A56F45F00F7A6A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC436D292A56F45F00F7A6A0 /* Main.storyboard */; };
 		FC436D2D2A56F46000F7A6A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC436D2C2A56F46000F7A6A0 /* Assets.xcassets */; };
 		FC436D302A56F46000F7A6A0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC436D2E2A56F46000F7A6A0 /* LaunchScreen.storyboard */; };
+		FC436D382A56F48800F7A6A0 /* MeasureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC436D372A56F48800F7A6A0 /* MeasureView.swift */; };
+		FC436D3A2A572E8200F7A6A0 /* IntrinsicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC436D392A572E8200F7A6A0 /* IntrinsicView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		FC436D2C2A56F46000F7A6A0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FC436D2F2A56F46000F7A6A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FC436D312A56F46000F7A6A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FC436D372A56F48800F7A6A0 /* MeasureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureView.swift; sourceTree = "<group>"; };
+		FC436D392A572E8200F7A6A0 /* IntrinsicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntrinsicView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +63,8 @@
 				FC436D232A56F45F00F7A6A0 /* AppDelegate.swift */,
 				FC436D252A56F45F00F7A6A0 /* SceneDelegate.swift */,
 				FC436D272A56F45F00F7A6A0 /* ViewController.swift */,
+				FC436D372A56F48800F7A6A0 /* MeasureView.swift */,
+				FC436D392A572E8200F7A6A0 /* IntrinsicView.swift */,
 				FC436D292A56F45F00F7A6A0 /* Main.storyboard */,
 				FC436D2C2A56F46000F7A6A0 /* Assets.xcassets */,
 				FC436D2E2A56F46000F7A6A0 /* LaunchScreen.storyboard */,
@@ -139,8 +145,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC436D282A56F45F00F7A6A0 /* ViewController.swift in Sources */,
+				FC436D382A56F48800F7A6A0 /* MeasureView.swift in Sources */,
 				FC436D242A56F45F00F7A6A0 /* AppDelegate.swift in Sources */,
 				FC436D262A56F45F00F7A6A0 /* SceneDelegate.swift in Sources */,
+				FC436D3A2A572E8200F7A6A0 /* IntrinsicView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,7 +224,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -270,7 +278,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
