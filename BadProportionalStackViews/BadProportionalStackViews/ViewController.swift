@@ -7,6 +7,106 @@
 
 import UIKit
 
+class MyProportionalStackView: UIStackView {
+	var calcConstraints: [NSLayoutConstraint] = []
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		
+		print(#function)
+		
+		distribution = .fill
+		
+		if calcConstraints.isEmpty {
+			var c: NSLayoutConstraint!
+			for i in 0..<(arrangedSubviews.count - 1) {
+				if axis == .vertical {
+					c = arrangedSubviews[i].heightAnchor.constraint(equalToConstant: 100.0)
+				} else {
+					c = arrangedSubviews[i].widthAnchor.constraint(equalToConstant: 100.0)
+				}
+				c.priority = .required - 1
+				c.isActive = true
+				calcConstraints.append(c)
+			}
+		}
+		
+		if axis == .vertical {
+			let sumOfIntrinsicSizes = arrangedSubviews.reduce(0) { $0 + $1.intrinsicContentSize.height }
+			let availableSize: CGFloat = bounds.height - (spacing * 2.0)
+			for i in 0..<(arrangedSubviews.count - 1) {
+				calcConstraints[i].constant = arrangedSubviews[i].intrinsicContentSize.height / sumOfIntrinsicSizes * availableSize
+			}
+		} else {
+			let sumOfIntrinsicSizes = arrangedSubviews.reduce(0) { $0 + $1.intrinsicContentSize.width }
+			let availableSize: CGFloat = bounds.width - (spacing * 2.0)
+			for i in 0..<(arrangedSubviews.count - 1) {
+				calcConstraints[i].constant = arrangedSubviews[i].intrinsicContentSize.width / sumOfIntrinsicSizes * availableSize
+			}
+		}
+		
+	}
+	
+}
+
+class custViewController: UIViewController {
+	
+	let stackView = MyProportionalStackView()
+
+	var stSpacing: CGFloat = 0.0
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		stSpacing += 15.0
+		if stSpacing > 120.0 {
+			stSpacing = 0.0
+		}
+		stackView.spacing = stSpacing
+		DispatchQueue.main.async {
+			self.stackView.arrangedSubviews.forEach { v in
+				print(v.intrinsicContentSize, v.frame.size)
+			}
+		}
+	}
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		let g = view.safeAreaLayoutGuide
+		
+		stackView.axis = .horizontal
+		stackView.spacing = 0
+		
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(stackView)
+		
+		NSLayoutConstraint.activate([
+			stackView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			stackView.centerYAnchor.constraint(equalTo: g.centerYAnchor),
+			stackView.widthAnchor.constraint(equalToConstant: 600.0),
+			stackView.heightAnchor.constraint(equalToConstant: 100.0),
+		])
+
+		let colors: [UIColor] = [
+			.systemRed, .systemGreen, .systemBlue, //.systemYellow
+		]
+
+		var vals: [CGFloat] = []
+		for i in 1...colors.count {
+			vals.append(CGFloat(i))
+		}
+		[stackView].forEach { sv in
+			for (val, c) in zip(vals, colors) {
+				let v = IntrinsicView()
+				v.myIntrinsicSize = .init(width: val, height: val)
+				v.backgroundColor = c
+				stackView.addArrangedSubview(v)
+			}
+		}
+
+	}
+}
+
+
 class tViewController: UIViewController {
 	let v = IntrinsicView()
 	
@@ -16,6 +116,20 @@ class tViewController: UIViewController {
 		v.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(v)
 		let g = view.safeAreaLayoutGuide
+		
+		let stackView = UIStackView()
+		stackView.axis = .vertical
+		stackView.spacing = 40
+		
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(stackView)
+		
+		NSLayoutConstraint.activate([
+			stackView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			stackView.centerYAnchor.constraint(equalTo: g.centerYAnchor),
+		])
+
+		
 		NSLayoutConstraint.activate([
 			v.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
 			//v.widthAnchor.constraint(equalToConstant: 100.0),

@@ -39,14 +39,10 @@ class IntrinsicView: UIView {
 		])
 	}
 	override func layoutSubviews() {
-		if self.intrinsicContentSize.width != 0.0 && self.intrinsicContentSize.height != 0.0 {
-			mLabel.text = "w: \(self.intrinsicContentSize)"
+		if self.intrinsicContentSize.width != self.intrinsicContentSize.height {
+			mLabel.text = "\(self.intrinsicContentSize)"
 		} else {
-			if self.intrinsicContentSize.width > 0.0 {
-				mLabel.text = "w: \(self.intrinsicContentSize.width)"
-			} else {
-				mLabel.text = "h: \(self.intrinsicContentSize.height)"
-			}
+			mLabel.text = "\(self.intrinsicContentSize.width)"
 		}
 	}
 	
