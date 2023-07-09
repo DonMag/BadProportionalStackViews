@@ -45,34 +45,36 @@ class MenuViewController: UIViewController {
 		if let sv = sender.superview as? UIStackView,
 		   let idx = sv.arrangedSubviews.firstIndex(of: sender) {
 			
-			var vc: UIViewController?
+			let vc: DemoViewController = DemoViewController()
 			
 			switch idx {
 			case 0:
-				vc = VerticalViewsVC()
+				vc.curAxis = .vertical
+				vc.useViews = true
 			case 1:
-				vc = HorizontalViewsVC()
+				vc.curAxis = .horizontal
+				vc.useViews = true
 			case 2:
-				vc = VerticalLabelsVC()
+				vc.curAxis = .vertical
+				vc.useViews = false
 			case 3:
-				vc = HorizontalLabelsVC()
+				vc.curAxis = .horizontal
+				vc.useViews = false
 			default:
 				()
 			}
 			
-			if let vc = vc {
-				self.navigationController?.pushViewController(vc, animated: true)
-			}
-			
+			self.navigationController?.pushViewController(vc, animated: true)
+
 		}
 	}
 	
-	
 }
 
-class MyBaseViewController: UIViewController {
+class DemoViewController: UIViewController {
 	
 	var curAxis: NSLayoutConstraint.Axis = .vertical
+	var useViews: Bool = true
 	
 	let aStack = UIStackView()
 	let bStack = UIStackView()
@@ -125,11 +127,24 @@ class MyBaseViewController: UIViewController {
 		aStack.distribution = .fill
 		bStack.distribution = .fillProportionally
 		
+		if useViews {
+			addIntrinsicViews()
+		} else {
+			addLabels()
+		}
+		constrainViews()
+		
+		containerView.isHidden = true
 	}
 	
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		print(#function)
+	}
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		updateViews()
+		containerView.isHidden = false
 	}
 
 	func updateViews() {
@@ -205,7 +220,7 @@ class MyBaseViewController: UIViewController {
 				let l = UILabel()
 				l.font = font
 				l.textAlignment = .center
-				l.numberOfLines = 0
+				l.numberOfLines = curAxis == .vertical ? 0 : 1
 				l.text = s
 				l.backgroundColor = c
 				l.textColor = .white
@@ -298,50 +313,3 @@ class MyBaseViewController: UIViewController {
 	
 }
 
-class HorizontalLabelsVC: MyBaseViewController {
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		
-		curAxis = .horizontal
-		addLabels()
-		constrainViews()
-	}
-
-}
-
-class HorizontalViewsVC: MyBaseViewController {
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		
-		curAxis = .horizontal
-		addIntrinsicViews()
-		constrainViews()
-	}
-	
-}
-
-class VerticalLabelsVC: MyBaseViewController {
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		
-		curAxis = .vertical
-		addLabels()
-		constrainViews()
-	}
-	
-}
-
-class VerticalViewsVC: MyBaseViewController {
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		
-		curAxis = .vertical
-		addIntrinsicViews()
-		constrainViews()
-	}
-	
-}
