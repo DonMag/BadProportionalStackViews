@@ -345,12 +345,6 @@ class MyBaseViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-//		for _ in 0..<6 {
-//			let mv = MeasureView()
-//			mv.translatesAutoresizingMaskIntoConstraints = false
-//			measureViews.append(mv)
-//			view.addSubview(mv)
-//		}
 		for _ in 0..<3 {
 			let mvA = MeasureView()
 			mvA.translatesAutoresizingMaskIntoConstraints = false
