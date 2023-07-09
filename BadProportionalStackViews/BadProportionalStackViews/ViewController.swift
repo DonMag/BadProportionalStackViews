@@ -59,6 +59,8 @@ class MyBaseViewController: UIViewController {
 	var measureViews: [MeasureView] = []
 	var calcConstraints: [NSLayoutConstraint] = []
 	
+	let containerView: UIView = UIView()
+	
 	let colors: [UIColor] = [
 		.systemRed, .systemGreen, .systemBlue, .systemYellow
 	]
@@ -66,22 +68,33 @@ class MyBaseViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
+		view.backgroundColor = .systemBackground
+		
 		for _ in 0..<colors.count {
 			let mvA = MeasureView()
 			mvA.translatesAutoresizingMaskIntoConstraints = false
 			aMeasureViews.append(mvA)
-			view.addSubview(mvA)
+			containerView.addSubview(mvA)
 			let mvB = MeasureView()
 			mvB.translatesAutoresizingMaskIntoConstraints = false
 			bMeasureViews.append(mvB)
-			view.addSubview(mvB)
+			containerView.addSubview(mvB)
 		}
 
 		[aStack, bStack].forEach { sv in
 			sv.translatesAutoresizingMaskIntoConstraints = false
-			view.addSubview(sv)
+			containerView.addSubview(sv)
 		}
 
+		containerView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(containerView)
+
+		let g = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			containerView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			containerView.centerYAnchor.constraint(equalTo: g.centerYAnchor),
+		])
+		
 		aStack.distribution = .fill
 		bStack.distribution = .fillProportionally
 		
@@ -160,19 +173,20 @@ class HorizontalLabelsVC: MyBaseViewController {
 			calcConstraints.append(c)
 		}
 		
+		let v = containerView
 		NSLayoutConstraint.activate([
-			aStack.topAnchor.constraint(equalTo: g.topAnchor, constant: 40.0),
-			aStack.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			aStack.topAnchor.constraint(equalTo: v.topAnchor, constant: 0.0),
+			aStack.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
 			aStack.heightAnchor.constraint(equalToConstant: 60.0),
 			aStack.widthAnchor.constraint(equalToConstant: 600.0),
 			
 			bStack.leadingAnchor.constraint(equalTo: aStack.leadingAnchor),
 			bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
 			bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
+
+			aStack.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
+			bStack.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0.0),
 		])
-		
-		aStack.distribution = .fill
-		bStack.distribution = .fillProportionally
 		
 	}
 
@@ -239,17 +253,21 @@ class HorizontalViewsVC: MyBaseViewController {
 			calcConstraints.append(c)
 		}
 		
+		let v = containerView
 		NSLayoutConstraint.activate([
-			aStack.topAnchor.constraint(equalTo: g.topAnchor, constant: 40.0),
-			aStack.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			aStack.topAnchor.constraint(equalTo: v.topAnchor, constant: 0.0),
+			aStack.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
 			aStack.heightAnchor.constraint(equalToConstant: 60.0),
 			aStack.widthAnchor.constraint(equalToConstant: 600.0),
 			
 			bStack.leadingAnchor.constraint(equalTo: aStack.leadingAnchor),
 			bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
 			bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
+			
+			aStack.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
+			bStack.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0.0),
 		])
-		
+
 	}
 	
 	override func updateAViews() {
@@ -320,15 +338,19 @@ class VerticalLabelsVC: MyBaseViewController {
 			calcConstraints.append(c)
 		}
 		
+		let v = containerView
 		NSLayoutConstraint.activate([
-			aStack.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
-			aStack.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			aStack.topAnchor.constraint(equalTo: v.topAnchor, constant: 0.0),
+			aStack.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
 			aStack.heightAnchor.constraint(equalToConstant: 600.0),
 			aStack.widthAnchor.constraint(equalToConstant: 80.0),
 			
 			bStack.topAnchor.constraint(equalTo: aStack.topAnchor),
 			bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
 			bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
+			
+			aStack.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0.0),
+			bStack.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
 		])
 		
 	}
@@ -394,17 +416,21 @@ class VerticalViewsVC: MyBaseViewController {
 			calcConstraints.append(c)
 		}
 		
+		let v = containerView
 		NSLayoutConstraint.activate([
-			aStack.topAnchor.constraint(equalTo: g.topAnchor, constant: 20.0),
-			aStack.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20.0),
+			aStack.topAnchor.constraint(equalTo: v.topAnchor, constant: 0.0),
+			aStack.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
 			aStack.heightAnchor.constraint(equalToConstant: 600.0),
 			aStack.widthAnchor.constraint(equalToConstant: 80.0),
 			
 			bStack.topAnchor.constraint(equalTo: aStack.topAnchor),
 			bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
 			bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
+			
+			aStack.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0.0),
+			bStack.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
 		])
-		
+
 	}
 	
 	override func updateAViews() {
