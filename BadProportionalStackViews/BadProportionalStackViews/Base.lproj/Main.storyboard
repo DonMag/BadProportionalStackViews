@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Ebe-IK-lcj">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -9,20 +9,82 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Vertical ViewsVC-->
+        <!--Menu View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="VerticalViewsVC" customModule="BadProportionalStackViews" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="MenuViewController" customModule="BadProportionalStackViews" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="21" translatesAutoresizingMaskIntoConstraints="NO" id="sHR-8A-snv">
+                                <rect key="frame" x="151.33333333333334" y="326" width="90.333333333333343" height="200.33333333333337"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="btG-e8-zPZ">
+                                        <rect key="frame" x="0.0" y="0.0" width="90.333333333333329" height="34.333333333333336"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="V Views"/>
+                                        <connections>
+                                            <action selector="gotTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zs5-G8-yTy"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F9x-9I-XOH">
+                                        <rect key="frame" x="0.0" y="55.333333333333314" width="90.333333333333329" height="34.333333333333343"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="H Views"/>
+                                        <connections>
+                                            <action selector="gotTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="H82-kZ-LCN"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EF5-Oq-o0e">
+                                        <rect key="frame" x="0.0" y="110.66666666666669" width="90.333333333333329" height="34.333333333333343"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="V Labels"/>
+                                        <connections>
+                                            <action selector="gotTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="amA-0g-DhP"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gU1-Tx-zrZ">
+                                        <rect key="frame" x="0.0" y="166" width="90.333333333333329" height="34.333333333333343"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="H Labels"/>
+                                        <connections>
+                                            <action selector="gotTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="JNS-LA-v5s"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="sHR-8A-snv" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Gj9-rE-0Nf"/>
+                            <constraint firstItem="sHR-8A-snv" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="P8C-3y-ewv"/>
+                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="t0F-cz-01O"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="40" y="5"/>
+            <point key="canvasLocation" x="965.64885496183206" y="4.9295774647887329"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="m1O-OD-CHw">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Ebe-IK-lcj" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="MrN-G1-af8">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="YSk-f3-kuJ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7Od-Hu-GM5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="38.931297709923662" y="4.9295774647887329"/>
         </scene>
     </scenes>
     <resources>

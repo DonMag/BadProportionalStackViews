@@ -41,11 +41,38 @@ class tViewController: UIViewController {
 
 class MenuViewController: UIViewController {
 	
+	@IBAction func gotTap(_ sender: UIButton) {
+		if let sv = sender.superview as? UIStackView,
+		   let idx = sv.arrangedSubviews.firstIndex(of: sender) {
+			
+			var vc: UIViewController?
+			
+			switch idx {
+			case 0:
+				vc = VerticalViewsVC()
+			case 1:
+				vc = HorizontalViewsVC()
+			case 2:
+				vc = VerticalLabelsVC()
+			case 3:
+				vc = HorizontalLabelsVC()
+			default:
+				()
+			}
+			
+			if let vc = vc {
+				self.navigationController?.pushViewController(vc, animated: true)
+			}
+			
+		}
+	}
 	
 	
 }
 
 class MyBaseViewController: UIViewController {
+	
+	var curAxis: NSLayoutConstraint.Axis = .vertical
 	
 	let aStack = UIStackView()
 	let bStack = UIStackView()
@@ -62,7 +89,7 @@ class MyBaseViewController: UIViewController {
 	let containerView: UIView = UIView()
 	
 	let colors: [UIColor] = [
-		.systemRed, .systemGreen, .systemBlue, .systemYellow
+		.systemRed, .systemGreen, .systemBlue, //.systemYellow
 	]
 	
 	override func viewDidLoad() {
@@ -102,10 +129,25 @@ class MyBaseViewController: UIViewController {
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		updateAViews()
+		updateViews()
 	}
 
-	func updateAViews() {
+	func updateViews() {
+
+		if curAxis == .vertical {
+			let sumOfIntrinsicSizes = aViews.reduce(0) { $0 + $1.intrinsicContentSize.height }
+			let availableSize: CGFloat = aStack.frame.height - (aStack.spacing * 2.0)
+			for i in 0..<(aViews.count - 1) {
+				calcConstraints[i].constant = aViews[i].intrinsicContentSize.height / sumOfIntrinsicSizes * availableSize
+			}
+		} else {
+			let sumOfIntrinsicSizes = aViews.reduce(0) { $0 + $1.intrinsicContentSize.width }
+			let availableSize: CGFloat = aStack.frame.width - (aStack.spacing * 2.0)
+			for i in 0..<(aViews.count - 1) {
+				calcConstraints[i].constant = aViews[i].intrinsicContentSize.width / sumOfIntrinsicSizes * availableSize
+			}
+		}
+
 	}
 	
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -115,113 +157,19 @@ class MyBaseViewController: UIViewController {
 		}
 		aStack.spacing = stSpacing
 		bStack.spacing = stSpacing
-		updateAViews()
+		updateViews()
 	}
 	
-}
-
-class HorizontalLabelsVC: MyBaseViewController {
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		
-		let g = view.safeAreaLayoutGuide
-		
-		var strs: [String] = []
-		var s: String = ""
-		for i in 1...colors.count {
-			s += "\(i)"
-			strs.append(s)
-		}
-		
-		[aStack, bStack].forEach { sv in
-			sv.axis = .horizontal
-			for (s, c) in zip(strs, colors) {
-				let l = UILabel()
-				l.font = .monospacedSystemFont(ofSize: 16, weight: .regular)
-				l.textAlignment = .center
-				l.text = s
-				l.backgroundColor = c
-				l.textColor = .white
-				if sv == aStack {
-					aViews.append(l)
-				} else {
-					bViews.append(l)
-				}
-				sv.addArrangedSubview(l)
-			}
-		}
-		for i in 0..<aViews.count {
-			aMeasureViews[i].leadingAnchor.constraint(equalTo: aViews[i].leadingAnchor).isActive = true
-			aMeasureViews[i].trailingAnchor.constraint(equalTo: aViews[i].trailingAnchor).isActive = true
-			bMeasureViews[i].leadingAnchor.constraint(equalTo: bViews[i].leadingAnchor).isActive = true
-			bMeasureViews[i].trailingAnchor.constraint(equalTo: bViews[i].trailingAnchor).isActive = true
-
-			aMeasureViews[i].topAnchor.constraint(equalTo: aStack.bottomAnchor, constant: 8.0).isActive = true
-			bMeasureViews[i].topAnchor.constraint(equalTo: aMeasureViews[i].bottomAnchor, constant: 24.0).isActive = true
-			bMeasureViews[i].bottomAnchor.constraint(equalTo: bStack.topAnchor, constant: -8.0).isActive = true
-			
-			aMeasureViews[i].axis = .horizontal
-			bMeasureViews[i].axis = .horizontal
-			aMeasureViews[i].heightAnchor.constraint(equalToConstant: 50.0).isActive = true
-			bMeasureViews[i].heightAnchor.constraint(equalTo: aMeasureViews[i].heightAnchor).isActive = true
-		}
-		for i in 0..<(aViews.count - 1) {
-			let c = aViews[i].widthAnchor.constraint(equalToConstant: 100.0)
-			c.priority = .required - 1
-			c.isActive = true
-			calcConstraints.append(c)
-		}
-		
-		let v = containerView
-		NSLayoutConstraint.activate([
-			aStack.topAnchor.constraint(equalTo: v.topAnchor, constant: 0.0),
-			aStack.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
-			aStack.heightAnchor.constraint(equalToConstant: 60.0),
-			aStack.widthAnchor.constraint(equalToConstant: 600.0),
-			
-			bStack.leadingAnchor.constraint(equalTo: aStack.leadingAnchor),
-			bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
-			bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
-
-			aStack.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
-			bStack.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0.0),
-		])
-		
-	}
-
-	override func updateAViews() {
-		super.updateAViews()
-		
-		let sumOfWidths = aViews.reduce(0) { $0 + $1.intrinsicContentSize.width }
-		
-		let svWidth: CGFloat = aStack.frame.width - (aStack.spacing * 2.0)
-		
-		for i in 0..<(aViews.count - 1) {
-			calcConstraints[i].constant = aViews[i].intrinsicContentSize.width / sumOfWidths * svWidth
-		}
-		
-	}
-
-}
-
-class HorizontalViewsVC: MyBaseViewController {
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		
-		let g = view.safeAreaLayoutGuide
-		
+	func addIntrinsicViews() {
 		var vals: [CGFloat] = []
 		for i in 1...colors.count {
 			vals.append(CGFloat(i))
 		}
-
 		[aStack, bStack].forEach { sv in
-			sv.axis = .horizontal
+			sv.axis = curAxis
 			for (val, c) in zip(vals, colors) {
 				let v = IntrinsicView()
-				v.myIntrinsicSize = .init(width: val, height: 0.0)
+				v.myIntrinsicSize = .init(width: val, height: val)
 				v.backgroundColor = c
 				if sv == aStack {
 					aViews.append(v)
@@ -231,80 +179,31 @@ class HorizontalViewsVC: MyBaseViewController {
 				sv.addArrangedSubview(v)
 			}
 		}
-		for i in 0..<aViews.count {
-			aMeasureViews[i].leadingAnchor.constraint(equalTo: aViews[i].leadingAnchor).isActive = true
-			aMeasureViews[i].trailingAnchor.constraint(equalTo: aViews[i].trailingAnchor).isActive = true
-			bMeasureViews[i].leadingAnchor.constraint(equalTo: bViews[i].leadingAnchor).isActive = true
-			bMeasureViews[i].trailingAnchor.constraint(equalTo: bViews[i].trailingAnchor).isActive = true
-			
-			aMeasureViews[i].topAnchor.constraint(equalTo: aStack.bottomAnchor, constant: 8.0).isActive = true
-			bMeasureViews[i].topAnchor.constraint(equalTo: aMeasureViews[i].bottomAnchor, constant: 24.0).isActive = true
-			bMeasureViews[i].bottomAnchor.constraint(equalTo: bStack.topAnchor, constant: -8.0).isActive = true
-			
-			aMeasureViews[i].axis = .horizontal
-			bMeasureViews[i].axis = .horizontal
-			aMeasureViews[i].heightAnchor.constraint(equalToConstant: 50.0).isActive = true
-			bMeasureViews[i].heightAnchor.constraint(equalTo: aMeasureViews[i].heightAnchor).isActive = true
-		}
-		for i in 0..<(aViews.count - 1) {
-			let c = aViews[i].widthAnchor.constraint(equalToConstant: 100.0)
-			c.priority = .required - 1
-			c.isActive = true
-			calcConstraints.append(c)
-		}
-		
-		let v = containerView
-		NSLayoutConstraint.activate([
-			aStack.topAnchor.constraint(equalTo: v.topAnchor, constant: 0.0),
-			aStack.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
-			aStack.heightAnchor.constraint(equalToConstant: 60.0),
-			aStack.widthAnchor.constraint(equalToConstant: 600.0),
-			
-			bStack.leadingAnchor.constraint(equalTo: aStack.leadingAnchor),
-			bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
-			bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
-			
-			aStack.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
-			bStack.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0.0),
-		])
-
 	}
+	func addLabels() {
 	
-	override func updateAViews() {
-		super.updateAViews()
-		
-		let sumOfWidths = aViews.reduce(0) { $0 + $1.intrinsicContentSize.width }
-		
-		let svWidth: CGFloat = aStack.frame.width - (aStack.spacing * 2.0)
-		
-		for i in 0..<(aViews.count - 1) {
-			calcConstraints[i].constant = aViews[i].intrinsicContentSize.width / sumOfWidths * svWidth
-		}
-		
-	}
-	
-}
-
-class VerticalLabelsVC: MyBaseViewController {
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		
-		let g = view.safeAreaLayoutGuide
+		let font: UIFont = .monospacedSystemFont(ofSize: curAxis == .horizontal ? 16.0 : 15.0, weight: .regular)
 		
 		var strs: [String] = []
-		var s: String = "1"
-		strs.append(s)
-		for i in 2...colors.count {
-			s += "\n\(i)"
+		if curAxis == .vertical {
+			var s: String = "1"
 			strs.append(s)
+			for i in 2...colors.count {
+				s += "\n\(i)"
+				strs.append(s)
+			}
+		} else {
+			var s: String = ""
+			for i in 1...colors.count {
+				s += "\(i)"
+				strs.append(s)
+			}
 		}
-
 		[aStack, bStack].forEach { sv in
-			sv.axis = .vertical
+			sv.axis = curAxis
 			for (s, c) in zip(strs, colors) {
 				let l = UILabel()
-				l.font = .monospacedSystemFont(ofSize: 15, weight: .regular)
+				l.font = font
 				l.textAlignment = .center
 				l.numberOfLines = 0
 				l.text = s
@@ -318,54 +217,119 @@ class VerticalLabelsVC: MyBaseViewController {
 				sv.addArrangedSubview(l)
 			}
 		}
-		for i in 0..<aViews.count {
-			aMeasureViews[i].topAnchor.constraint(equalTo: aViews[i].topAnchor).isActive = true
-			aMeasureViews[i].bottomAnchor.constraint(equalTo: aViews[i].bottomAnchor).isActive = true
-			bMeasureViews[i].topAnchor.constraint(equalTo: bViews[i].topAnchor).isActive = true
-			bMeasureViews[i].bottomAnchor.constraint(equalTo: bViews[i].bottomAnchor).isActive = true
-			
-			aMeasureViews[i].leadingAnchor.constraint(equalTo: aStack.trailingAnchor, constant: 8.0).isActive = true
-			bMeasureViews[i].leadingAnchor.constraint(equalTo: aMeasureViews[i].trailingAnchor, constant: 24.0).isActive = true
-			bMeasureViews[i].trailingAnchor.constraint(equalTo: bStack.leadingAnchor, constant: -8.0).isActive = true
-			
-			aMeasureViews[i].axis = .vertical
-			bMeasureViews[i].axis = .vertical
-		}
-		for i in 0..<(aViews.count - 1) {
-			let c = aViews[i].heightAnchor.constraint(equalToConstant: 100.0)
-			c.priority = .required - 1
-			c.isActive = true
-			calcConstraints.append(c)
-		}
+	}
+	func constrainViews() {
 		
-		let v = containerView
-		NSLayoutConstraint.activate([
-			aStack.topAnchor.constraint(equalTo: v.topAnchor, constant: 0.0),
-			aStack.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
-			aStack.heightAnchor.constraint(equalToConstant: 600.0),
-			aStack.widthAnchor.constraint(equalToConstant: 80.0),
+		if curAxis == .vertical {
+			for i in 0..<aViews.count {
+				aMeasureViews[i].topAnchor.constraint(equalTo: aViews[i].topAnchor).isActive = true
+				aMeasureViews[i].bottomAnchor.constraint(equalTo: aViews[i].bottomAnchor).isActive = true
+				bMeasureViews[i].topAnchor.constraint(equalTo: bViews[i].topAnchor).isActive = true
+				bMeasureViews[i].bottomAnchor.constraint(equalTo: bViews[i].bottomAnchor).isActive = true
+				
+				aMeasureViews[i].leadingAnchor.constraint(equalTo: aStack.trailingAnchor, constant: 8.0).isActive = true
+				bMeasureViews[i].leadingAnchor.constraint(equalTo: aMeasureViews[i].trailingAnchor, constant: 24.0).isActive = true
+				bMeasureViews[i].trailingAnchor.constraint(equalTo: bStack.leadingAnchor, constant: -8.0).isActive = true
+				
+				aMeasureViews[i].axis = .vertical
+				bMeasureViews[i].axis = .vertical
+			}
+			for i in 0..<(aViews.count - 1) {
+				let c = aViews[i].heightAnchor.constraint(equalToConstant: 100.0)
+				c.priority = .required - 1
+				c.isActive = true
+				calcConstraints.append(c)
+			}
 			
-			bStack.topAnchor.constraint(equalTo: aStack.topAnchor),
-			bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
-			bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
+			let v = containerView
+			NSLayoutConstraint.activate([
+				aStack.topAnchor.constraint(equalTo: v.topAnchor, constant: 0.0),
+				aStack.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
+				aStack.heightAnchor.constraint(equalToConstant: 600.0),
+				aStack.widthAnchor.constraint(equalToConstant: 80.0),
+				
+				bStack.topAnchor.constraint(equalTo: aStack.topAnchor),
+				bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
+				bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
+				
+				aStack.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0.0),
+				bStack.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
+			])
+		} else {
+			for i in 0..<aViews.count {
+				aMeasureViews[i].leadingAnchor.constraint(equalTo: aViews[i].leadingAnchor).isActive = true
+				aMeasureViews[i].trailingAnchor.constraint(equalTo: aViews[i].trailingAnchor).isActive = true
+				bMeasureViews[i].leadingAnchor.constraint(equalTo: bViews[i].leadingAnchor).isActive = true
+				bMeasureViews[i].trailingAnchor.constraint(equalTo: bViews[i].trailingAnchor).isActive = true
+				
+				aMeasureViews[i].topAnchor.constraint(equalTo: aStack.bottomAnchor, constant: 8.0).isActive = true
+				bMeasureViews[i].topAnchor.constraint(equalTo: aMeasureViews[i].bottomAnchor, constant: 24.0).isActive = true
+				bMeasureViews[i].bottomAnchor.constraint(equalTo: bStack.topAnchor, constant: -8.0).isActive = true
+				
+				aMeasureViews[i].axis = .horizontal
+				bMeasureViews[i].axis = .horizontal
+				aMeasureViews[i].heightAnchor.constraint(equalToConstant: 50.0).isActive = true
+				bMeasureViews[i].heightAnchor.constraint(equalTo: aMeasureViews[i].heightAnchor).isActive = true
+			}
+			for i in 0..<(aViews.count - 1) {
+				let c = aViews[i].widthAnchor.constraint(equalToConstant: 100.0)
+				c.priority = .required - 1
+				c.isActive = true
+				calcConstraints.append(c)
+			}
 			
-			aStack.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0.0),
-			bStack.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
-		])
-		
+			let v = containerView
+			NSLayoutConstraint.activate([
+				aStack.topAnchor.constraint(equalTo: v.topAnchor, constant: 0.0),
+				aStack.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
+				aStack.heightAnchor.constraint(equalToConstant: 60.0),
+				aStack.widthAnchor.constraint(equalToConstant: 600.0),
+				
+				bStack.leadingAnchor.constraint(equalTo: aStack.leadingAnchor),
+				bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
+				bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
+				
+				aStack.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
+				bStack.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0.0),
+			])
+		}
+
 	}
 	
-	override func updateAViews() {
-		super.updateAViews()
+}
+
+class HorizontalLabelsVC: MyBaseViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
 		
-		let sumOfHeights = aViews.reduce(0) { $0 + $1.intrinsicContentSize.height }
+		curAxis = .horizontal
+		addLabels()
+		constrainViews()
+	}
+
+}
+
+class HorizontalViewsVC: MyBaseViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
 		
-		let svHeight: CGFloat = aStack.frame.height - (aStack.spacing * 2.0)
+		curAxis = .horizontal
+		addIntrinsicViews()
+		constrainViews()
+	}
+	
+}
+
+class VerticalLabelsVC: MyBaseViewController {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
 		
-		for i in 0..<(aViews.count - 1) {
-			calcConstraints[i].constant = aViews[i].intrinsicContentSize.height / sumOfHeights * svHeight
-		}
-		
+		curAxis = .vertical
+		addLabels()
+		constrainViews()
 	}
 	
 }
@@ -375,75 +339,9 @@ class VerticalViewsVC: MyBaseViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		let g = view.safeAreaLayoutGuide
-		
-		var vals: [CGFloat] = []
-		for i in 1...colors.count {
-			vals.append(CGFloat(i))
-		}
-		
-		[aStack, bStack].forEach { sv in
-			sv.axis = .vertical
-			for (val, c) in zip(vals, colors) {
-				let v = IntrinsicView()
-				v.myIntrinsicSize = .init(width: 0.0, height: val)
-				v.backgroundColor = c
-				if sv == aStack {
-					aViews.append(v)
-				} else {
-					bViews.append(v)
-				}
-				sv.addArrangedSubview(v)
-			}
-		}
-		for i in 0..<aViews.count {
-			aMeasureViews[i].topAnchor.constraint(equalTo: aViews[i].topAnchor).isActive = true
-			aMeasureViews[i].bottomAnchor.constraint(equalTo: aViews[i].bottomAnchor).isActive = true
-			bMeasureViews[i].topAnchor.constraint(equalTo: bViews[i].topAnchor).isActive = true
-			bMeasureViews[i].bottomAnchor.constraint(equalTo: bViews[i].bottomAnchor).isActive = true
-			
-			aMeasureViews[i].leadingAnchor.constraint(equalTo: aStack.trailingAnchor, constant: 8.0).isActive = true
-			bMeasureViews[i].leadingAnchor.constraint(equalTo: aMeasureViews[i].trailingAnchor, constant: 24.0).isActive = true
-			bMeasureViews[i].trailingAnchor.constraint(equalTo: bStack.leadingAnchor, constant: -8.0).isActive = true
-			
-			aMeasureViews[i].axis = .vertical
-			bMeasureViews[i].axis = .vertical
-		}
-		for i in 0..<(aViews.count - 1) {
-			let c = aViews[i].heightAnchor.constraint(equalToConstant: 100.0)
-			c.priority = .required - 1
-			c.isActive = true
-			calcConstraints.append(c)
-		}
-		
-		let v = containerView
-		NSLayoutConstraint.activate([
-			aStack.topAnchor.constraint(equalTo: v.topAnchor, constant: 0.0),
-			aStack.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 0.0),
-			aStack.heightAnchor.constraint(equalToConstant: 600.0),
-			aStack.widthAnchor.constraint(equalToConstant: 80.0),
-			
-			bStack.topAnchor.constraint(equalTo: aStack.topAnchor),
-			bStack.heightAnchor.constraint(equalTo: aStack.heightAnchor),
-			bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
-			
-			aStack.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: 0.0),
-			bStack.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: 0.0),
-		])
-
-	}
-	
-	override func updateAViews() {
-		super.updateAViews()
-		
-		let sumOfHeights = aViews.reduce(0) { $0 + $1.intrinsicContentSize.height }
-		
-		let svHeight: CGFloat = aStack.frame.height - (aStack.spacing * 2.0)
-		
-		for i in 0..<(aViews.count - 1) {
-			calcConstraints[i].constant = aViews[i].intrinsicContentSize.height / sumOfHeights * svHeight
-		}
-		
+		curAxis = .vertical
+		addIntrinsicViews()
+		constrainViews()
 	}
 	
 }
