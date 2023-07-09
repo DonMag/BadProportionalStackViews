@@ -339,13 +339,13 @@ class MyBaseViewController: UIViewController {
 	var calcConstraints: [NSLayoutConstraint] = []
 	
 	let colors: [UIColor] = [
-		.systemRed, .systemGreen, .systemBlue,
+		.systemRed, .systemGreen, //.systemBlue,
 	]
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		for _ in 0..<3 {
+		for _ in 0..<colors.count {
 			let mvA = MeasureView()
 			mvA.translatesAutoresizingMaskIntoConstraints = false
 			aMeasureViews.append(mvA)
@@ -361,6 +361,9 @@ class MyBaseViewController: UIViewController {
 			view.addSubview(sv)
 		}
 
+		aStack.distribution = .fill
+		bStack.distribution = .fillProportionally
+		
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -411,7 +414,7 @@ class HorizontalLabelsVC: MyBaseViewController {
 				sv.addArrangedSubview(l)
 			}
 		}
-		for i in 0..<3 {
+		for i in 0..<aViews.count {
 			aMeasureViews[i].leadingAnchor.constraint(equalTo: aViews[i].leadingAnchor).isActive = true
 			aMeasureViews[i].trailingAnchor.constraint(equalTo: aViews[i].trailingAnchor).isActive = true
 			bMeasureViews[i].leadingAnchor.constraint(equalTo: bViews[i].leadingAnchor).isActive = true
@@ -426,7 +429,7 @@ class HorizontalLabelsVC: MyBaseViewController {
 			aMeasureViews[i].heightAnchor.constraint(equalToConstant: 50.0).isActive = true
 			bMeasureViews[i].heightAnchor.constraint(equalTo: aMeasureViews[i].heightAnchor).isActive = true
 		}
-		for i in 0..<2 {
+		for i in 0..<(aViews.count - 1) {
 			let c = aViews[i].widthAnchor.constraint(equalToConstant: 100.0)
 			c.priority = .required - 1
 			c.isActive = true
@@ -456,7 +459,7 @@ class HorizontalLabelsVC: MyBaseViewController {
 		
 		let svWidth: CGFloat = aStack.frame.width - (aStack.spacing * 2.0)
 		
-		for i in 0..<2 {
+		for i in 0..<(aViews.count - 1) {
 			calcConstraints[i].constant = aViews[i].intrinsicContentSize.width / sumOfWidths * svWidth
 		}
 		
@@ -489,7 +492,7 @@ class HorizontalViewsVC: MyBaseViewController {
 				sv.addArrangedSubview(v)
 			}
 		}
-		for i in 0..<3 {
+		for i in 0..<aViews.count {
 			aMeasureViews[i].leadingAnchor.constraint(equalTo: aViews[i].leadingAnchor).isActive = true
 			aMeasureViews[i].trailingAnchor.constraint(equalTo: aViews[i].trailingAnchor).isActive = true
 			bMeasureViews[i].leadingAnchor.constraint(equalTo: bViews[i].leadingAnchor).isActive = true
@@ -504,7 +507,7 @@ class HorizontalViewsVC: MyBaseViewController {
 			aMeasureViews[i].heightAnchor.constraint(equalToConstant: 50.0).isActive = true
 			bMeasureViews[i].heightAnchor.constraint(equalTo: aMeasureViews[i].heightAnchor).isActive = true
 		}
-		for i in 0..<2 {
+		for i in 0..<(aViews.count - 1) {
 			let c = aViews[i].widthAnchor.constraint(equalToConstant: 100.0)
 			c.priority = .required - 1
 			c.isActive = true
@@ -522,8 +525,8 @@ class HorizontalViewsVC: MyBaseViewController {
 			bStack.widthAnchor.constraint(equalTo: aStack.widthAnchor),
 		])
 		
-		aStack.distribution = .fill
-		bStack.distribution = .fillProportionally
+//		aStack.distribution = .fill
+//		bStack.distribution = .fillProportionally
 		
 	}
 	
@@ -534,7 +537,7 @@ class HorizontalViewsVC: MyBaseViewController {
 		
 		let svWidth: CGFloat = aStack.frame.width - (aStack.spacing * 2.0)
 		
-		for i in 0..<2 {
+		for i in 0..<(aViews.count - 1) {
 			calcConstraints[i].constant = aViews[i].intrinsicContentSize.width / sumOfWidths * svWidth
 		}
 		
@@ -571,7 +574,7 @@ class VerticalLabelsVC: MyBaseViewController {
 				sv.addArrangedSubview(l)
 			}
 		}
-		for i in 0..<3 {
+		for i in 0..<aViews.count {
 			aMeasureViews[i].topAnchor.constraint(equalTo: aViews[i].topAnchor).isActive = true
 			aMeasureViews[i].bottomAnchor.constraint(equalTo: aViews[i].bottomAnchor).isActive = true
 			bMeasureViews[i].topAnchor.constraint(equalTo: bViews[i].topAnchor).isActive = true
@@ -584,7 +587,7 @@ class VerticalLabelsVC: MyBaseViewController {
 			aMeasureViews[i].axis = .vertical
 			bMeasureViews[i].axis = .vertical
 		}
-		for i in 0..<2 {
+		for i in 0..<(aViews.count - 1) {
 			let c = aViews[i].heightAnchor.constraint(equalToConstant: 100.0)
 			c.priority = .required - 1
 			c.isActive = true
@@ -614,7 +617,7 @@ class VerticalLabelsVC: MyBaseViewController {
 		
 		let svHeight: CGFloat = aStack.frame.height - (aStack.spacing * 2.0)
 		
-		for i in 0..<2 {
+		for i in 0..<(aViews.count - 1) {
 			calcConstraints[i].constant = aViews[i].intrinsicContentSize.height / sumOfHeights * svHeight
 		}
 		
@@ -647,7 +650,7 @@ class VerticalViewsVC: MyBaseViewController {
 				sv.addArrangedSubview(v)
 			}
 		}
-		for i in 0..<3 {
+		for i in 0..<aViews.count {
 			aMeasureViews[i].topAnchor.constraint(equalTo: aViews[i].topAnchor).isActive = true
 			aMeasureViews[i].bottomAnchor.constraint(equalTo: aViews[i].bottomAnchor).isActive = true
 			bMeasureViews[i].topAnchor.constraint(equalTo: bViews[i].topAnchor).isActive = true
@@ -660,7 +663,7 @@ class VerticalViewsVC: MyBaseViewController {
 			aMeasureViews[i].axis = .vertical
 			bMeasureViews[i].axis = .vertical
 		}
-		for i in 0..<2 {
+		for i in 0..<(aViews.count - 1) {
 			let c = aViews[i].heightAnchor.constraint(equalToConstant: 100.0)
 			c.priority = .required - 1
 			c.isActive = true
@@ -690,7 +693,7 @@ class VerticalViewsVC: MyBaseViewController {
 		
 		let svHeight: CGFloat = aStack.frame.height - (aStack.spacing * 2.0)
 		
-		for i in 0..<2 {
+		for i in 0..<(aViews.count - 1) {
 			calcConstraints[i].constant = aViews[i].intrinsicContentSize.height / sumOfHeights * svHeight
 		}
 		
