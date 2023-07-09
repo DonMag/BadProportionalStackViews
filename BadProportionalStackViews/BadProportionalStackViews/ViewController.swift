@@ -39,8 +39,66 @@ class tViewController: UIViewController {
 	}
 }
 
+struct MyOptions {
+	var axis: NSLayoutConstraint.Axis = .vertical
+	var useLabels: Bool = false
+	var title: String = ""
+}
+
 class MenuViewController: UIViewController {
 	
+	let options: [MyOptions] = [
+		MyOptions(axis: .vertical, useLabels: false, title: "Vertical Views"),
+		MyOptions(axis: .horizontal, useLabels: false, title: "Horizontal Views"),
+		MyOptions(axis: .vertical, useLabels: true, title: "Vertical Labels"),
+		MyOptions(axis: .horizontal, useLabels: true, title: "Horizontal Labels"),
+	]
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		view.backgroundColor = .systemBackground
+		let g = view.safeAreaLayoutGuide
+
+		let stackView = UIStackView()
+		stackView.axis = .vertical
+		stackView.spacing = 40
+		
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(stackView)
+		
+		NSLayoutConstraint.activate([
+			stackView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			stackView.centerYAnchor.constraint(equalTo: g.centerYAnchor),
+		])
+		
+		options.forEach { opts in
+			let b = UIButton()
+			b.backgroundColor = .systemBlue
+			b.setTitleColor(.white, for: .normal)
+			b.setTitleColor(.lightGray, for: .highlighted)
+			b.setTitle(opts.title, for: [])
+			b.layer.cornerRadius = 8
+			b.widthAnchor.constraint(equalToConstant: 200.0).isActive = true
+			b.heightAnchor.constraint(equalToConstant: 50.0).isActive = true
+			b.addTarget(self, action: #selector(btnTapped(_:)), for: .touchUpInside)
+			stackView.addArrangedSubview(b)
+		}
+		
+	}
+	
+	@objc func btnTapped(_ sender: UIButton) {
+		if let sv = sender.superview as? UIStackView,
+		   let idx = sv.arrangedSubviews.firstIndex(of: sender) {
+
+			let vc: DemoViewController = DemoViewController()
+			vc.curAxis = options[idx].axis
+			vc.useLabels = options[idx].useLabels
+			vc.title = options[idx].title
+			
+			self.navigationController?.pushViewController(vc, animated: true)
+		}
+	}
 	@IBAction func gotTap(_ sender: UIButton) {
 		if let sv = sender.superview as? UIStackView,
 		   let idx = sv.arrangedSubviews.firstIndex(of: sender) {
@@ -50,16 +108,16 @@ class MenuViewController: UIViewController {
 			switch idx {
 			case 0:
 				vc.curAxis = .vertical
-				vc.useViews = true
+				vc.useLabels = true
 			case 1:
 				vc.curAxis = .horizontal
-				vc.useViews = true
+				vc.useLabels = true
 			case 2:
 				vc.curAxis = .vertical
-				vc.useViews = false
+				vc.useLabels = false
 			case 3:
 				vc.curAxis = .horizontal
-				vc.useViews = false
+				vc.useLabels = false
 			default:
 				()
 			}
@@ -74,7 +132,7 @@ class MenuViewController: UIViewController {
 class DemoViewController: UIViewController {
 	
 	var curAxis: NSLayoutConstraint.Axis = .vertical
-	var useViews: Bool = true
+	var useLabels: Bool = false
 	
 	let aStack = UIStackView()
 	let bStack = UIStackView()
@@ -98,6 +156,7 @@ class DemoViewController: UIViewController {
 		super.viewDidLoad()
 		
 		view.backgroundColor = .systemBackground
+		view.clipsToBounds = true
 		
 		for _ in 0..<colors.count {
 			let mvA = MeasureView()
@@ -127,24 +186,21 @@ class DemoViewController: UIViewController {
 		aStack.distribution = .fill
 		bStack.distribution = .fillProportionally
 		
-		if useViews {
-			addIntrinsicViews()
-		} else {
+		if useLabels {
 			addLabels()
+		} else {
+			addIntrinsicViews()
 		}
 		constrainViews()
-		
-		containerView.isHidden = true
 	}
 	
+	var cSize: CGSize = .init(width: -1.0, height: -1.0)
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
-		print(#function)
-	}
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		updateViews()
-		containerView.isHidden = false
+		if cSize != containerView.frame.size {
+			cSize = containerView.frame.size
+			updateViews()
+		}
 	}
 
 	func updateViews() {
