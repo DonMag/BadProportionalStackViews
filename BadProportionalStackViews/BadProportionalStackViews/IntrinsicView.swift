@@ -13,7 +13,7 @@ class IntrinsicView: UIView {
 		let v = UILabel()
 		v.font = .monospacedDigitSystemFont(ofSize: 12.0, weight: .bold)
 		v.textAlignment = .center
-		v.textColor = .white
+		v.textColor = .black
 		return v
 	}()
 

@@ -176,7 +176,7 @@ class MenuViewController: UIViewController {
 
 		let stackView = UIStackView()
 		stackView.axis = .vertical
-		stackView.spacing = 40
+		stackView.spacing = 24
 		
 		stackView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(stackView)
@@ -306,19 +306,23 @@ class DemoViewController: UIViewController {
 			addIntrinsicViews()
 		}
 		constrainViews()
+		
+		containerView.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
 	}
 	
 	var cSize: CGSize = .init(width: -1.0, height: -1.0)
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
 		if cSize != containerView.frame.size {
+			containerView.setNeedsLayout()
+			containerView.layoutIfNeeded()
 			cSize = containerView.frame.size
 			updateViews()
 		}
 	}
-
+	
 	func updateViews() {
-
+		
 		if curAxis == .vertical {
 			let sumOfIntrinsicSizes = aViews.reduce(0) { $0 + $1.intrinsicContentSize.height }
 			let availableSize: CGFloat = aStack.frame.height - (aStack.spacing * 2.0)
@@ -333,6 +337,7 @@ class DemoViewController: UIViewController {
 			}
 		}
 
+		//reAddBViews()
 	}
 	
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -480,6 +485,17 @@ class DemoViewController: UIViewController {
 		}
 
 	}
-	
+	func reAddBViews() {
+		bViews.forEach { v in
+			v.removeFromSuperview()
+			bStack.addArrangedSubview(v)
+		}
+		for (mv, bv) in zip(bMeasureViews, bViews) {
+			NSLayoutConstraint.activate([
+				mv.leadingAnchor.constraint(equalTo: bv.leadingAnchor),
+				mv.trailingAnchor.constraint(equalTo: bv.trailingAnchor),
+			])
+		}
+	}
 }
 
