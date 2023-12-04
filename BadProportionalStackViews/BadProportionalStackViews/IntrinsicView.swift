@@ -17,7 +17,13 @@ class IntrinsicView: UIView {
 		return v
 	}()
 
-	public var myIntrinsicSize: CGSize = .zero
+	public var myIntrinsicSize: CGSize = .zero {
+		didSet {
+			invalidateIntrinsicContentSize()
+			setNeedsLayout()
+		}
+	}
+	
 	override var intrinsicContentSize: CGSize {
 		return myIntrinsicSize
 	}
@@ -39,6 +45,8 @@ class IntrinsicView: UIView {
 		])
 	}
 	override func layoutSubviews() {
+		mLabel.text = "\(self.intrinsicContentSize.width)"
+		return()
 		if self.intrinsicContentSize.width != self.intrinsicContentSize.height {
 			mLabel.text = "\(self.intrinsicContentSize)"
 		} else {
