@@ -558,7 +558,7 @@ class DemoViewController: UIViewController {
 				sv.addArrangedSubview(v)
 				vSubs.append(v)
 				let m = MeasureView()
-				m.backgroundColor = c.withAlphaComponent(0.5)
+				m.backgroundColor = c.withAlphaComponent(0.1)
 				m.axis = curAxis
 				m.translatesAutoresizingMaskIntoConstraints = false
 				containerView.addSubview(m)
@@ -599,22 +599,14 @@ class DemoViewController: UIViewController {
 			theLabels.append(label)
 		}
 		
-		// add a segmented control
-		let sc = UISegmentedControl(items: ["1, 2, 3", "1, 1, 1", "100, 150, 200"])
-		sc.translatesAutoresizingMaskIntoConstraints = false
-		view.addSubview(sc)
-		
 		containerView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(containerView)
 		
 		let g = view.safeAreaLayoutGuide
 		NSLayoutConstraint.activate([
 			
-			sc.topAnchor.constraint(equalTo: g.topAnchor, constant: 40.0),
-			sc.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-
-			containerView.topAnchor.constraint(equalTo: sc.bottomAnchor, constant: 20.0),
 			containerView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+			containerView.centerYAnchor.constraint(equalTo: g.centerYAnchor),
 			containerView.widthAnchor.constraint(equalToConstant: 600.0),
 			
 			theLabels[0].topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0.0),
@@ -634,39 +626,13 @@ class DemoViewController: UIViewController {
 		afterStack.distribution = .fillProportionally
 
 		containerView.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
-		
-		sc.addTarget(self, action: #selector(segChanged(_:)), for: .valueChanged)
-		sc.selectedSegmentIndex = 0
-		segChanged(sc)
-	}
-	
-	var cSize: CGSize = .init(width: -1.0, height: -1.0)
-	override func viewDidLayoutSubviews() {
-		super.viewDidLayoutSubviews()
-		if cSize != containerView.frame.size {
-			containerView.setNeedsLayout()
-			containerView.layoutIfNeeded()
-			cSize = containerView.frame.size
-			updateViews()
-		}
-	}
-	
-	func updateViews() {
-		let sumOfIntrinsicSizes = calcStack.arrangedSubviews.reduce(0) { $0 + $1.intrinsicContentSize.width }
-		let availableSize: CGFloat = calcStack.frame.width - (calcStack.spacing * 2.0)
-		for i in 0..<(calcStack.arrangedSubviews.count - 1) {
-			calcConstraints[i].constant = calcStack.arrangedSubviews[i].intrinsicContentSize.width / sumOfIntrinsicSizes * availableSize
-		}
-		reAddAfterViews()
-	}
-	
-	@objc func segChanged(_ sender: UISegmentedControl) {
+
 		let widths: [[CGFloat]] = [
 			[1, 2, 3],
 			[1, 1, 1],
 			[100, 150, 200],
 		]
-		let curWidths = widths[sender.selectedSegmentIndex]
+		let curWidths = widths[0]
 		theStacks.forEach { sv in
 			let curSP = sv.spacing
 			sv.spacing = 0
@@ -680,7 +646,46 @@ class DemoViewController: UIViewController {
 		updateViews()
 	}
 	
-
+	var cSize: CGSize = .init(width: -1.0, height: -1.0)
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		if cSize != containerView.frame.size {
+			containerView.setNeedsLayout()
+			containerView.layoutIfNeeded()
+			cSize = containerView.frame.size
+			updateViews()
+		}
+	}
+	
+//	@objc func segChanged(_ sender: UISegmentedControl) {
+//		let widths: [[CGFloat]] = [
+//			[1, 2, 3],
+//			[1, 1, 1],
+//			[100, 150, 200],
+//		]
+//		let curWidths = widths[sender.selectedSegmentIndex]
+//		theStacks.forEach { sv in
+//			let curSP = sv.spacing
+//			sv.spacing = 0
+//			for (v, w) in zip(sv.arrangedSubviews, curWidths) {
+//				if let v = v as? IntrinsicView {
+//					v.myIntrinsicSize = .init(width: w, height: 30.0)
+//				}
+//			}
+//			sv.spacing = curSP
+//		}
+//		updateViews()
+//	}
+	
+	func updateViews() {
+		let sumOfIntrinsicSizes = calcStack.arrangedSubviews.reduce(0) { $0 + $1.intrinsicContentSize.width }
+		let availableSize: CGFloat = calcStack.frame.width - (calcStack.spacing * 2.0)
+		for i in 0..<(calcStack.arrangedSubviews.count - 1) {
+			calcConstraints[i].constant = calcStack.arrangedSubviews[i].intrinsicContentSize.width / sumOfIntrinsicSizes * availableSize
+		}
+		reAddAfterViews()
+	}
+	
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		stSpacing += 15.0
 		if stSpacing > 120.0 {
