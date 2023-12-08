@@ -500,7 +500,9 @@ class origDemoViewController: UIViewController {
 }
 
 class MyCView: UIView {}
-class MySCView: UIView {}
+class MyASCView: UIView {}
+class MyBSCView: UIView {}
+class MyCSCView: UIView {}
 
 class DemoViewController: UIViewController {
 	
@@ -549,13 +551,32 @@ class DemoViewController: UIViewController {
 
 		theStacks = [calcStack, beforeStack, afterStack]
 
-		for _ in 0..<3 {
-			let v = MySCView()
+//		for _ in 0..<3 {
+//			let v = MySCView()
+//			stackHolders.append(v)
+//			v.translatesAutoresizingMaskIntoConstraints = false
+//			containerView.addSubview(v)
+//		}
+
+		do {
+			let v = MyASCView()
 			stackHolders.append(v)
 			v.translatesAutoresizingMaskIntoConstraints = false
 			containerView.addSubview(v)
 		}
-		
+		do {
+			let v = MyBSCView()
+			stackHolders.append(v)
+			v.translatesAutoresizingMaskIntoConstraints = false
+			containerView.addSubview(v)
+		}
+		do {
+			let v = MyCSCView()
+			stackHolders.append(v)
+			v.translatesAutoresizingMaskIntoConstraints = false
+			containerView.addSubview(v)
+		}
+
 		let thePrompts: [String] = [
 			"Caclulated Proportional Distribution - this is what I'd expect:",
 			"Set .spacing AFTER adding arranged subviews:",
@@ -576,7 +597,7 @@ class DemoViewController: UIViewController {
 				containerView.addSubview(m)
 				vMeas.append(m)
 				NSLayoutConstraint.activate([
-					m.topAnchor.constraint(equalTo: hView.bottomAnchor, constant: 8.0),
+					m.topAnchor.constraint(equalTo: hView.bottomAnchor, constant: 4.0),
 					hView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
 					hView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
 				])
@@ -637,7 +658,6 @@ class DemoViewController: UIViewController {
 			NSLayoutConstraint.activate([
 				mv.leadingAnchor.constraint(equalTo: v.leadingAnchor),
 				mv.trailingAnchor.constraint(equalTo: v.trailingAnchor),
-				mv.topAnchor.constraint(equalTo: cStack.bottomAnchor, constant: 4.0),
 			])
 			let c = v.widthAnchor.constraint(equalToConstant: 100.0)
 			c.priority = .required - 1
@@ -655,23 +675,11 @@ class DemoViewController: UIViewController {
 		let curWidths = widths[0]
 		theSubViews.forEach { vSubs in
 			for (v, w) in zip(vSubs, curWidths) {
-				if let v = v as? IntrinsicView {
-					v.myIntrinsicSize = .init(width: w, height: 30.0)
-				}
+				v.myIntrinsicSize = .init(width: w, height: 30.0)
 			}
 		}
-//		theStacks.forEach { sv in
-//			let curSP = sv.spacing
-//			sv.spacing = 0
-//			for (v, w) in zip(sv.arrangedSubviews, curWidths) {
-//				if let v = v as? IntrinsicView {
-//					v.myIntrinsicSize = .init(width: w, height: 30.0)
-//				}
-//			}
-//			sv.spacing = curSP
-//		}
 		rebuildStacks()
-		//updateViews()
+		updateViews()
 	}
 	
 	func rebuildStacks() {
@@ -695,7 +703,6 @@ class DemoViewController: UIViewController {
 				NSLayoutConstraint.activate([
 					mv.leadingAnchor.constraint(equalTo: v.leadingAnchor),
 					mv.trailingAnchor.constraint(equalTo: v.trailingAnchor),
-					mv.topAnchor.constraint(equalTo: s.bottomAnchor, constant: 4.0),
 				])
 			}
 		}
@@ -718,7 +725,6 @@ class DemoViewController: UIViewController {
 				NSLayoutConstraint.activate([
 					mv.leadingAnchor.constraint(equalTo: v.leadingAnchor),
 					mv.trailingAnchor.constraint(equalTo: v.trailingAnchor),
-					mv.topAnchor.constraint(equalTo: s.bottomAnchor, constant: 4.0),
 				])
 			}
 			s.spacing = stSpacing
@@ -733,7 +739,7 @@ class DemoViewController: UIViewController {
 			containerView.setNeedsLayout()
 			containerView.layoutIfNeeded()
 			cSize = containerView.frame.size
-			//updateViews()
+			updateViews()
 		}
 	}
 	
@@ -763,6 +769,10 @@ class DemoViewController: UIViewController {
 		let availableSize: CGFloat = cStack.frame.width - (cStack.spacing * 2.0)
 		for i in 0..<(cStack.arrangedSubviews.count - 1) {
 			calcConstraints[i].constant = cStack.arrangedSubviews[i].intrinsicContentSize.width / sumOfIntrinsicSizes * availableSize
+			calcConstraints[i].priority = calcConstraints[i].constant > 0 ? .required : .defaultHigh
+		}
+		theMeasureViews[0].forEach { mv in
+			mv.setNeedsLayout()
 		}
 		//reAddAfterViews()
 	}
