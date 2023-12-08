@@ -8,14 +8,29 @@
 import UIKit
 
 class MyProportionalStackView: UIStackView {
-	var calcConstraints: [NSLayoutConstraint] = []
+	
+	private var calcConstraints: [NSLayoutConstraint] = []
+	private var useProportional: Bool = true
+	
+	override var distribution: UIStackView.Distribution {
+		set {
+			if newValue == .fillProportionally {
+				self.useProportional = true
+				super.distribution = .fill
+			} else {
+				self.useProportional = false
+				super.distribution = newValue
+			}
+		}
+		get {
+			return self.useProportional ? .fillProportionally : super.distribution
+		}
+	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		
-		print(#function)
-		
-		distribution = .fill
+
+		if !self.useProportional { return }
 		
 		if calcConstraints.isEmpty {
 			var c: NSLayoutConstraint!
@@ -31,7 +46,12 @@ class MyProportionalStackView: UIStackView {
 			}
 		}
 		
+		// "spaces" are 1 less than number of arranged subviews
 		let numSpaces: CGFloat = CGFloat(arrangedSubviews.count - 1)
+		
+		// we don't set the width constraint on the last arranged subview
+		//	we let it "fill out the remaining space"
+		//	otherwise, due to floating-point and rounding, we can get auto-layout complaints
 		if axis == .vertical {
 			let sumOfIntrinsicSizes = arrangedSubviews.reduce(0) { $0 + $1.intrinsicContentSize.height }
 			let availableSize: CGFloat = bounds.height - (spacing * numSpaces)
