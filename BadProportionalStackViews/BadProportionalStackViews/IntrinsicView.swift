@@ -9,20 +9,23 @@ import UIKit
 
 class IntrinsicView: UIView {
 
-	let mLabel: UILabel = {
-		let v = UILabel()
-		v.font = .monospacedDigitSystemFont(ofSize: 12.0, weight: .bold)
-		v.textAlignment = .center
-		v.textColor = .black
-		return v
-	}()
-
+	public var showWidth: Bool = true
+	public var showHeight: Bool = false
+	
 	public var myIntrinsicSize: CGSize = .zero {
 		didSet {
 			invalidateIntrinsicContentSize()
 			setNeedsLayout()
 		}
 	}
+	
+	private let mLabel: UILabel = {
+		let v = UILabel()
+		v.font = .monospacedDigitSystemFont(ofSize: 12.0, weight: .bold)
+		v.textAlignment = .center
+		v.textColor = .black
+		return v
+	}()
 	
 	override var intrinsicContentSize: CGSize {
 		return myIntrinsicSize
@@ -36,7 +39,7 @@ class IntrinsicView: UIView {
 		super.init(coder: coder)
 		commonInit()
 	}
-	func commonInit() {
+	private func commonInit() {
 		mLabel.translatesAutoresizingMaskIntoConstraints = false
 		addSubview(mLabel)
 		NSLayoutConstraint.activate([
@@ -45,13 +48,16 @@ class IntrinsicView: UIView {
 		])
 	}
 	override func layoutSubviews() {
-		mLabel.text = "\(self.intrinsicContentSize.width)"
-		return()
-		if self.intrinsicContentSize.width != self.intrinsicContentSize.height {
-			mLabel.text = "\(self.intrinsicContentSize)"
-		} else {
-			mLabel.text = "\(self.intrinsicContentSize.width)"
+		var s: String = ""
+		if showWidth {
+			s = "\(self.intrinsicContentSize.width)"
+			if showHeight {
+				s = "\(self.intrinsicContentSize)"
+			}
+		} else if showHeight {
+			s = "\(self.intrinsicContentSize.height)"
 		}
+		mLabel.text = s
 	}
 	
 }

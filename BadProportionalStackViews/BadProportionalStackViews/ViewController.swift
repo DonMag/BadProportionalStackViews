@@ -499,48 +499,61 @@ class origDemoViewController: UIViewController {
 	}
 }
 
+class MyCView: UIView {}
+class MySCView: UIView {}
+
 class DemoViewController: UIViewController {
 	
 	var curAxis: NSLayoutConstraint.Axis = .horizontal
 	var useLabels: Bool = false
 	
-	let calcStack = UIStackView()
-	let beforeStack = UIStackView()
-	let afterStack = UIStackView()
+	var calcStack = UIStackView()
+	var beforeStack = UIStackView()
+	var afterStack = UIStackView()
 
 	var stSpacing: CGFloat = 0.0
 	
-	var aViews: [UIView] = []
-	var bViews: [UIView] = []
-	var cViews: [UIView] = []
-	var aMeasureViews: [MeasureView] = []
-	var bMeasureViews: [MeasureView] = []
-	var cMeasureViews: [MeasureView] = []
-	var measureViews: [MeasureView] = []
-	
 	var calcConstraints: [NSLayoutConstraint] = []
 
+	var stackHolders: [UIView] = []
 	var theStacks: [UIStackView] = []
 	var theSubViews: [[IntrinsicView]] = []
 	var theMeasureViews: [[MeasureView]] = []
 
-	let containerView: UIView = UIView()
+	let containerView: MyCView = MyCView()
 	
 	let colors: [UIColor] = [
-		.systemRed, .systemGreen, .systemBlue, //.systemYellow
+		.systemRed, .systemGreen, .systemBlue,
 	]
 	
+	var w: NSLayoutConstraint!
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
 		view.backgroundColor = .systemBackground
-		view.clipsToBounds = true
+		
+		let m1 = MeasureView()
+		m1.axis = .horizontal
+		m1.translatesAutoresizingMaskIntoConstraints = false
+		m1.backgroundColor = .systemBlue.withAlphaComponent(0.25)
+		view.addSubview(m1)
+		w = m1.widthAnchor.constraint(equalToConstant: 20.0)
+		NSLayoutConstraint.activate([
+			m1.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20.0),
+			m1.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20.0),
+			w,
+			//m1.widthAnchor.constraint(equalToConstant: 212.0),
+		])
+		
+		m1.isHidden = true
 
 		theStacks = [calcStack, beforeStack, afterStack]
 
-		theStacks.forEach { sv in
-			sv.translatesAutoresizingMaskIntoConstraints = false
-			containerView.addSubview(sv)
+		for _ in 0..<3 {
+			let v = MySCView()
+			stackHolders.append(v)
+			v.translatesAutoresizingMaskIntoConstraints = false
+			containerView.addSubview(v)
 		}
 		
 		let thePrompts: [String] = [
@@ -548,14 +561,13 @@ class DemoViewController: UIViewController {
 			"Set .spacing AFTER adding arranged subviews:",
 			"Set .spacing BEFORE adding arranged subviews:",
 		]
-		
-		theStacks.forEach { sv in
+
+		stackHolders.forEach { hView in
 			var vSubs: [IntrinsicView] = []
 			var vMeas: [MeasureView] = []
 			colors.forEach { c in
 				let v = IntrinsicView()
 				v.backgroundColor = c
-				sv.addArrangedSubview(v)
 				vSubs.append(v)
 				let m = MeasureView()
 				m.backgroundColor = c.withAlphaComponent(0.1)
@@ -564,25 +576,13 @@ class DemoViewController: UIViewController {
 				containerView.addSubview(m)
 				vMeas.append(m)
 				NSLayoutConstraint.activate([
-					m.leadingAnchor.constraint(equalTo: v.leadingAnchor),
-					m.trailingAnchor.constraint(equalTo: v.trailingAnchor),
-					m.topAnchor.constraint(equalTo: sv.bottomAnchor, constant: 8.0),
-					m.heightAnchor.constraint(equalToConstant: 50.0),
-					sv.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-					sv.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+					m.topAnchor.constraint(equalTo: hView.bottomAnchor, constant: 8.0),
+					hView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+					hView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
 				])
 			}
 			theSubViews.append(vSubs)
 			theMeasureViews.append(vMeas)
-		}
-		
-		calcStack.arrangedSubviews.forEach { v in
-			if v != calcStack.arrangedSubviews.last {
-				let c = v.widthAnchor.constraint(equalToConstant: 100.0)
-				c.priority = .required - 1
-				c.isActive = true
-				calcConstraints.append(c)
-			}
 		}
 		
 		var theLabels: [UILabel] = []
@@ -610,21 +610,41 @@ class DemoViewController: UIViewController {
 			containerView.widthAnchor.constraint(equalToConstant: 600.0),
 			
 			theLabels[0].topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0.0),
-			theStacks[0].topAnchor.constraint(equalTo: theLabels[0].bottomAnchor, constant: 4.0),
+			stackHolders[0].topAnchor.constraint(equalTo: theLabels[0].bottomAnchor, constant: 4.0),
 			
 			theLabels[1].topAnchor.constraint(equalTo: theMeasureViews[0][0].bottomAnchor, constant: 12.0),
-			theStacks[1].topAnchor.constraint(equalTo: theLabels[1].bottomAnchor, constant: 4.0),
+			stackHolders[1].topAnchor.constraint(equalTo: theLabels[1].bottomAnchor, constant: 4.0),
 			
 			theLabels[2].topAnchor.constraint(equalTo: theMeasureViews[1][0].bottomAnchor, constant: 12.0),
-			theStacks[2].topAnchor.constraint(equalTo: theLabels[2].bottomAnchor, constant: 4.0),
+			stackHolders[2].topAnchor.constraint(equalTo: theLabels[2].bottomAnchor, constant: 4.0),
 			
 			theMeasureViews[2][0].bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0.0),
+			
 		])
 		
-		calcStack.distribution = .fill
-		beforeStack.distribution = .fillProportionally
-		afterStack.distribution = .fillProportionally
-
+		let cStack = UIStackView()
+		cStack.distribution = .fill
+		cStack.translatesAutoresizingMaskIntoConstraints = false
+		stackHolders[0].addSubview(cStack)
+		NSLayoutConstraint.activate([
+			cStack.topAnchor.constraint(equalTo: stackHolders[0].topAnchor),
+			cStack.leadingAnchor.constraint(equalTo: stackHolders[0].leadingAnchor),
+			cStack.trailingAnchor.constraint(equalTo: stackHolders[0].trailingAnchor),
+			cStack.bottomAnchor.constraint(equalTo: stackHolders[0].bottomAnchor),
+		])
+		for (v, mv) in zip(theSubViews[0], theMeasureViews[0]) {
+			cStack.addArrangedSubview(v)
+			NSLayoutConstraint.activate([
+				mv.leadingAnchor.constraint(equalTo: v.leadingAnchor),
+				mv.trailingAnchor.constraint(equalTo: v.trailingAnchor),
+				mv.topAnchor.constraint(equalTo: cStack.bottomAnchor, constant: 4.0),
+			])
+			let c = v.widthAnchor.constraint(equalToConstant: 100.0)
+			c.priority = .required - 1
+			c.isActive = true
+			calcConstraints.append(c)
+		}
+		
 		containerView.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
 
 		let widths: [[CGFloat]] = [
@@ -633,27 +653,87 @@ class DemoViewController: UIViewController {
 			[100, 150, 200],
 		]
 		let curWidths = widths[0]
-		theStacks.forEach { sv in
-			let curSP = sv.spacing
-			sv.spacing = 0
-			for (v, w) in zip(sv.arrangedSubviews, curWidths) {
+		theSubViews.forEach { vSubs in
+			for (v, w) in zip(vSubs, curWidths) {
 				if let v = v as? IntrinsicView {
 					v.myIntrinsicSize = .init(width: w, height: 30.0)
 				}
 			}
-			sv.spacing = curSP
 		}
-		updateViews()
+//		theStacks.forEach { sv in
+//			let curSP = sv.spacing
+//			sv.spacing = 0
+//			for (v, w) in zip(sv.arrangedSubviews, curWidths) {
+//				if let v = v as? IntrinsicView {
+//					v.myIntrinsicSize = .init(width: w, height: 30.0)
+//				}
+//			}
+//			sv.spacing = curSP
+//		}
+		rebuildStacks()
+		//updateViews()
+	}
+	
+	func rebuildStacks() {
+		if let v = stackHolders[1].subviews.first as? UIStackView {
+			v.removeFromSuperview()
+		}
+		do {
+			let s = UIStackView()
+			s.translatesAutoresizingMaskIntoConstraints = false
+			stackHolders[1].addSubview(s)
+			s.distribution = .fillProportionally
+			s.spacing = stSpacing
+			NSLayoutConstraint.activate([
+				s.topAnchor.constraint(equalTo: stackHolders[1].topAnchor),
+				s.leadingAnchor.constraint(equalTo: stackHolders[1].leadingAnchor),
+				s.trailingAnchor.constraint(equalTo: stackHolders[1].trailingAnchor),
+				s.bottomAnchor.constraint(equalTo: stackHolders[1].bottomAnchor),
+			])
+			for (v, mv) in zip(theSubViews[1], theMeasureViews[1]) {
+				s.addArrangedSubview(v)
+				NSLayoutConstraint.activate([
+					mv.leadingAnchor.constraint(equalTo: v.leadingAnchor),
+					mv.trailingAnchor.constraint(equalTo: v.trailingAnchor),
+					mv.topAnchor.constraint(equalTo: s.bottomAnchor, constant: 4.0),
+				])
+			}
+		}
+		if let v = stackHolders[2].subviews.first as? UIStackView {
+			v.removeFromSuperview()
+		}
+		do {
+			let s = UIStackView()
+			s.translatesAutoresizingMaskIntoConstraints = false
+			stackHolders[2].addSubview(s)
+			s.distribution = .fillProportionally
+			NSLayoutConstraint.activate([
+				s.topAnchor.constraint(equalTo: stackHolders[2].topAnchor),
+				s.leadingAnchor.constraint(equalTo: stackHolders[2].leadingAnchor),
+				s.trailingAnchor.constraint(equalTo: stackHolders[2].trailingAnchor),
+				s.bottomAnchor.constraint(equalTo: stackHolders[2].bottomAnchor),
+			])
+			for (v, mv) in zip(theSubViews[2], theMeasureViews[2]) {
+				s.addArrangedSubview(v)
+				NSLayoutConstraint.activate([
+					mv.leadingAnchor.constraint(equalTo: v.leadingAnchor),
+					mv.trailingAnchor.constraint(equalTo: v.trailingAnchor),
+					mv.topAnchor.constraint(equalTo: s.bottomAnchor, constant: 4.0),
+				])
+			}
+			s.spacing = stSpacing
+		}
 	}
 	
 	var cSize: CGSize = .init(width: -1.0, height: -1.0)
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
+		if nil == containerView.superview { return }
 		if cSize != containerView.frame.size {
 			containerView.setNeedsLayout()
 			containerView.layoutIfNeeded()
 			cSize = containerView.frame.size
-			updateViews()
+			//updateViews()
 		}
 	}
 	
@@ -678,15 +758,23 @@ class DemoViewController: UIViewController {
 //	}
 	
 	func updateViews() {
-		let sumOfIntrinsicSizes = calcStack.arrangedSubviews.reduce(0) { $0 + $1.intrinsicContentSize.width }
-		let availableSize: CGFloat = calcStack.frame.width - (calcStack.spacing * 2.0)
-		for i in 0..<(calcStack.arrangedSubviews.count - 1) {
-			calcConstraints[i].constant = calcStack.arrangedSubviews[i].intrinsicContentSize.width / sumOfIntrinsicSizes * availableSize
+		guard let cStack = stackHolders[0].subviews.first as? UIStackView else { return }
+		let sumOfIntrinsicSizes = cStack.arrangedSubviews.reduce(0) { $0 + $1.intrinsicContentSize.width }
+		let availableSize: CGFloat = cStack.frame.width - (cStack.spacing * 2.0)
+		for i in 0..<(cStack.arrangedSubviews.count - 1) {
+			calcConstraints[i].constant = cStack.arrangedSubviews[i].intrinsicContentSize.width / sumOfIntrinsicSizes * availableSize
 		}
-		reAddAfterViews()
+		//reAddAfterViews()
 	}
 	
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if nil == containerView.superview {
+			w.constant += 10.0
+			if w.constant > 300.0 {
+				w.constant = 20.0
+			}
+			return
+		}
 		stSpacing += 15.0
 		if stSpacing > 120.0 {
 			stSpacing = 0.0
