@@ -54,6 +54,10 @@ class aMeasureView: UIView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 
+		if bounds.width < 16.0 {
+			shapeLayer.path = nil
+			return
+		}
 		var pt1: CGPoint!
 		let pth = CGMutablePath()
 
@@ -225,6 +229,13 @@ class MeasureView: UIView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
+		mLabel.text = String(format: "%0.2f", bounds.width)
+
+		if bounds.width <= 0.0 {
+			shapeLayer.path = nil
+			return
+		}
+
 		var pt1: CGPoint!
 		let pth = CGMutablePath()
 		
@@ -285,37 +296,56 @@ class MeasureView: UIView {
 			
 		} else {
 			
-			if self.bounds.width <= 0.0 {
+			if self.bounds.width <= 4.0 {
+				dRect = bounds
+				dRect.size.height = bounds.height - (mLabel.frame.height + 0.0)
+
+				// left and right edge lines
+				pt1 = .init(x: dRect.minX + 0.5, y: dRect.minY)
+				pth.move(to: pt1)
+				pt1.y = dRect.maxY
+				pth.addLine(to: pt1)
+				
+				pt1 = .init(x: dRect.maxX - 0.5, y: dRect.minY)
+				pth.move(to: pt1)
+				pt1.y = dRect.maxY
+				pth.addLine(to: pt1)
+
+				shapeLayer.path = pth
+				
 				return
 			}
-			
-			mLabel.text = String(format: "%0.2f", bounds.width)
 			
 			dRect = bounds.insetBy(dx: 2.0, dy: 0.0)
 			dRect.size.height = bounds.height - (mLabel.frame.height + 0.0)
 			
-			// left arrow-head
-			pt1 = .init(x: dRect.minX + arrowHeadWidth, y: dRect.midY - arrowHeadHeight * 0.5)
-			pth.move(to: pt1)
-
-			pt1 = .init(x: dRect.minX, y: dRect.midY)
-			pth.addLine(to: pt1)
-
-			pt1 = .init(x: dRect.minX + arrowHeadWidth, y: dRect.midY + arrowHeadHeight * 0.5)
-			pth.addLine(to: pt1)
-			
-			// right arrow-head
-			pt1 = .init(x: dRect.maxX - arrowHeadWidth, y: dRect.midY - arrowHeadHeight * 0.5)
-			pth.move(to: pt1)
-			
-			pt1 = .init(x: dRect.maxX, y: dRect.midY)
-			pth.addLine(to: pt1)
-
-			pt1 = .init(x: dRect.maxX - arrowHeadWidth, y: dRect.midY + arrowHeadHeight * 0.5)
-			pth.addLine(to: pt1)
+			if dRect.width < arrowHeadWidth * 2.0 {
+				// don't draw the arrow heads
+			} else {
+				// left arrow-head
+				pt1 = .init(x: dRect.minX + arrowHeadWidth, y: dRect.midY - arrowHeadHeight * 0.5)
+				pth.move(to: pt1)
+				
+				pt1 = .init(x: dRect.minX, y: dRect.midY)
+				pth.addLine(to: pt1)
+				
+				pt1 = .init(x: dRect.minX + arrowHeadWidth, y: dRect.midY + arrowHeadHeight * 0.5)
+				pth.addLine(to: pt1)
+				
+				// right arrow-head
+				pt1 = .init(x: dRect.maxX - arrowHeadWidth, y: dRect.midY - arrowHeadHeight * 0.5)
+				pth.move(to: pt1)
+				
+				pt1 = .init(x: dRect.maxX, y: dRect.midY)
+				pth.addLine(to: pt1)
+				
+				pt1 = .init(x: dRect.maxX - arrowHeadWidth, y: dRect.midY + arrowHeadHeight * 0.5)
+				pth.addLine(to: pt1)
+			}
 			
 			var gap = dRect.width - (arrowHeadWidth * 2.0 + 8.0)
 			if gap < 8.0 {
+			} else if gap < 24.0 {
 				// center line
 				pt1 = .init(x: dRect.minX, y: dRect.midY)
 				pt1.x = dRect.midX - 4.0

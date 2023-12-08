@@ -46,6 +46,7 @@ class IntrinsicView: UIView {
 			mLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
 			mLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
 		])
+		clipsToBounds = true
 	}
 	override func layoutSubviews() {
 		var s: String = ""
